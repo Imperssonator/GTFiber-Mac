@@ -35,3 +35,13 @@ Open the installed .app by double-clicking on it. Wait at least one minute, even
 * If you would like to save the Orientation Map, Orientation Distribution, and 2D order parameter decay plot as figures for each image, check "Save Figures" below the "Run a Directory..." button
 * Allow progress bars to complete, then open the directory to view your results.
 * Images in a single directory should be the same physical size, e.g. 5000 x 5000nm, because the specified Image Width will be applied to all
+
+### Examples
+GTFiber comes with example images from the protocol paper in which it was introduced, to show what each step looks like with good filter parameters.
+
+* Load an image from the "Example Images" folder, such as "Fig 5A 5000nm.tif"
+* Enter the size of the image, specified in the image's file name
+* Change the default settings to reflect those listed in the caption of Figure 5 of the main paper (defaults are pretty close already)
+* Click "Run Filter", wait for processing to complete
+* Click "Orientation Map"
+* Click "OP 2D"
