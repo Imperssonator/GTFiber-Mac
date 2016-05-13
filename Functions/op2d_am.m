@@ -112,13 +112,19 @@ fitY = BETA(1)+(1-BETA(1)).*exp(-fineFrames./BETA(2));  % Use fineFrames to make
 smod = BETA(1)+(1-BETA(1)).*exp(-frames./BETA(2));  % Use regular frames so that data lines up in csv
 
 % Hard coded figure settings that look nice
-font = 30;
+if ispc
+    font=24;
+    flfont=22;
+    flpos=[0.6, 0.855];
+else
+    font=30;
+    flfont=28;
+    flpos=[0.64, 0.87];
+end
 marker = 9;
 markerline = 1.25;
 line = 2.2;
 lenscale = 1000;
-flpos = [0.64, 0.87];
-flfont = 28;
 edgedark = 0;
 edgewidth = 0.75;
 

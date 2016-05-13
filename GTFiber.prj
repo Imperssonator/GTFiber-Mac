@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="330039786" file="/Users/Imperssonator/Documents/MATLAB/FiberAppGT/GTFiber.prj" location="/Users/Imperssonator/Documents/MATLAB/FiberAppGT" name="GTFiber" preferred-package-location="/Users/Imperssonator/Documents/MATLAB/FiberAppGT/GTFiber/for_redistribution" preferred-package-type="package.type.app" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="4219028250" file="/Users/Imperssonator/Documents/MATLAB/GTFiber-Mac/GTFiber.prj" location="/Users/Imperssonator/Documents/MATLAB/GTFiber-Mac" name="GTFiber" preferred-package-location="/Users/Imperssonator/Documents/MATLAB/GTFiber-Mac/GTFiber/for_redistribution" preferred-package-type="package.type.app" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>GTFiber</param.appname>
     <param.icon />
     <param.icons />
@@ -133,10 +133,10 @@ If it is defined, set it to the concatenation of these strings:
       <file>${PROJECT_ROOT}/GTFiber.fig</file>
     </fileset.depfun>
     <build-deliverables>
-      <file location="${PROJECT_ROOT}/GTFiber/for_testing" name="splash.png" optional="false">/Users/Imperssonator/Documents/MATLAB/FiberAppGT/GTFiber/for_testing/splash.png</file>
-      <file location="${PROJECT_ROOT}/GTFiber/for_testing" name="run_GTFiber.sh" optional="false">/Users/Imperssonator/Documents/MATLAB/FiberAppGT/GTFiber/for_testing/run_GTFiber.sh</file>
-      <file location="${PROJECT_ROOT}/GTFiber/for_testing" name="GTFiber.app" optional="false">/Users/Imperssonator/Documents/MATLAB/FiberAppGT/GTFiber/for_testing/GTFiber.app</file>
-      <file location="${PROJECT_ROOT}/GTFiber/for_testing" name="readme.txt" optional="true">/Users/Imperssonator/Documents/MATLAB/FiberAppGT/GTFiber/for_testing/readme.txt</file>
+      <file location="${PROJECT_ROOT}/GTFiber/for_testing" name="GTFiber.app" optional="false">/Users/Imperssonator/Documents/MATLAB/GTFiber-Mac/GTFiber/for_testing/GTFiber.app</file>
+      <file location="${PROJECT_ROOT}/GTFiber/for_testing" name="run_GTFiber.sh" optional="false">/Users/Imperssonator/Documents/MATLAB/GTFiber-Mac/GTFiber/for_testing/run_GTFiber.sh</file>
+      <file location="${PROJECT_ROOT}/GTFiber/for_testing" name="splash.png" optional="false">/Users/Imperssonator/Documents/MATLAB/GTFiber-Mac/GTFiber/for_testing/splash.png</file>
+      <file location="${PROJECT_ROOT}/GTFiber/for_testing" name="readme.txt" optional="true">/Users/Imperssonator/Documents/MATLAB/GTFiber-Mac/GTFiber/for_testing/readme.txt</file>
     </build-deliverables>
     <workflow />
     <matlab>
