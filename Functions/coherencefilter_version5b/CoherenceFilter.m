@@ -1,4 +1,4 @@
-function [u, v1x, v1y] = CoherenceFilter(u,Options)
+function [u, v1x, v1y, u_prog] = CoherenceFilter(u,Options)
 % This function COHERENCEFILTER will perform Anisotropic Diffusion of a
 % 2D gray/color image or 3D image volume, Which will reduce the noise in
 % an image while preserving the region edges, and will smooth along
@@ -232,6 +232,7 @@ end
 
 % Anisotropic diffusion main loop
 hdiff = waitbar(0,'Diffusion Filter Progress');
+u_prog = {};
 while (t < (Options.T-0.001))
     % Update time, adjust last time step to exactly finish at the wanted
     % diffusion time
@@ -262,6 +263,7 @@ while (t < (Options.T-0.001))
             u=Anisotropic_step3D(u,Options);
         end
     end
+    u_prog = [u_prog, mat2gray(u)];
 end
 close(hdiff)
 

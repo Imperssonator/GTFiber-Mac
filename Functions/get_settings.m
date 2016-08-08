@@ -40,4 +40,15 @@ settings.Options = Options;
 settings.gridStepnm = str2num(get(handles.gridStep,'String'));
 settings.frameStepnmWide = str2num(get(handles.frameStep,'String'));
 
+% Fiber Width calc settings
+settings.fibWidSamps = str2num(get(handles.fibWidSamps,'String'));
+
+% Gif Export Settings
+settings.initDelay = 1;
+settings.CEDStepDelay = 0.1;
+settings.CEDFinalDelay = 0.8;
+settings.skelDelay = 4;
+settings.plotDelay = 0.5;
+settings.plotFinal = 3;
+
 end

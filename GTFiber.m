@@ -30,7 +30,7 @@ function varargout = GTFiber(varargin)
 
 % Edit the above text to modify the response to help GTFiber
 
-% Last Modified by GUIDE v2.5 05-May-2016 12:15:07
+% Last Modified by GUIDE v2.5 05-Aug-2016 10:17:55
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -186,6 +186,31 @@ settings.figSwitch = 1; % display figure if it's called by this button
 settings.figSave = 0;   % don't try to save figure when called by this button
 [handles.ims.frames, handles.ims.sfull, handles.ims.smod] = op2d_am(handles.ims, settings);
 
+guidata(hObject, handles);
+
+
+% --- Executes on button press in GetFiberWidth.
+function GetFiberWidth_Callback(hObject, eventdata, handles)
+% hObject    handle to GetFiberWidth (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+if ~isfield(handles,'ims')
+    noload = errordlg('Go to File>Load Image to load an image before filtering.');
+    return
+end
+
+if ~isfield(handles.ims,'AngMap')
+    nofilt = errordlg('"Run Filter" must be executed before results can be displayed');
+    return
+end
+
+settings = get_settings(handles);
+handles.ims.FWD = fiber_width_dist(handles.ims,settings);
+figure; 
+histogram(handles.ims.FWD,20)
+
+guidata(hObject, handles);
 
 
 % --- Executes on button press in runDir.
@@ -578,3 +603,68 @@ function widthText_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to widthText (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
+
+
+
+function fibWidSamps_Callback(hObject, eventdata, handles)
+% hObject    handle to fibWidSamps (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of fibWidSamps as text
+%        str2double(get(hObject,'String')) returns contents of fibWidSamps as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function fibWidSamps_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to fibWidSamps (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --------------------------------------------------------------------
+function Menu_Image_Callback(hObject, eventdata, handles)
+% hObject    handle to Menu_Image (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% --------------------------------------------------------------------
+function Invert_Image_Callback(hObject, eventdata, handles)
+% hObject    handle to Invert_Image (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+handles.ims.gray = imcomplement(handles.ims.gray);
+figure; imshow(handles.ims.gray);
+
+guidata(hObject, handles);
+
+
+% --------------------------------------------------------------------
+function Make_Gif_Callback(hObject, eventdata, handles)
+% hObject    handle to Make_Gif (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+if ~isfield(handles,'ims')
+    noload = errordlg('Go to File>Load Image to load an image before filtering.');
+    return
+end
+
+settings = get_settings(handles);
+[settings, ims] = pix_settings(settings,handles.ims);
+handles.ims = ims;
+gif_filter(handles.ims,settings);
+
+settings.figSwitch = 1; % Gotta turn on figSwitch to make the figure
+settings.figSave = 0;   % No need to save
+gif_op2d_am(handles.ims,settings);
+
+guidata(hObject, handles);
