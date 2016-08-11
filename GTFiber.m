@@ -30,7 +30,7 @@ function varargout = GTFiber(varargin)
 
 % Edit the above text to modify the response to help GTFiber
 
-% Last Modified by GUIDE v2.5 05-Aug-2016 10:17:55
+% Last Modified by GUIDE v2.5 08-Aug-2016 17:40:13
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -629,25 +629,6 @@ end
 
 
 % --------------------------------------------------------------------
-function Menu_Image_Callback(hObject, eventdata, handles)
-% hObject    handle to Menu_Image (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-
-% --------------------------------------------------------------------
-function Invert_Image_Callback(hObject, eventdata, handles)
-% hObject    handle to Invert_Image (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-handles.ims.gray = imcomplement(handles.ims.gray);
-figure; imshow(handles.ims.gray);
-
-guidata(hObject, handles);
-
-
-% --------------------------------------------------------------------
 function Make_Gif_Callback(hObject, eventdata, handles)
 % hObject    handle to Make_Gif (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -666,5 +647,23 @@ gif_filter(handles.ims,settings);
 settings.figSwitch = 1; % Gotta turn on figSwitch to make the figure
 settings.figSave = 0;   % No need to save
 gif_op2d_am(handles.ims,settings);
+
+guidata(hObject, handles);
+
+
+% --- Executes on button press in invertColor.
+function invertColor_Callback(hObject, eventdata, handles)
+% hObject    handle to invertColor (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of invertColor
+
+switch get(handles.invertColor,'Value')
+    case 1
+        figure; imshow(imcomplement(handles.ims.gray));
+    case 0
+        figure; imshow(handles.ims.gray)
+end
 
 guidata(hObject, handles);

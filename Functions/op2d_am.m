@@ -76,7 +76,8 @@ umFrames = (frames.*2+1).*nmPix/1000;
 if figSwitch || figSave
     [smod, BETA] = plotS2Dint(umFrames,sfull,ims,figSave);
 else
-    BETA = nlinfit(umFrames,sfull,@(beta,x) beta(1)+(1-beta(1)).*exp(-x./beta(2)),[0.5, 1]);
+%     BETA = nlinfit(umFrames,sfull,@(beta,x) beta(1)+(1-beta(1)).*exp(-x./beta(2)),[0.5, 1]);
+    BETA = lsqnonlin(@(B) B(1)+(1-B(1)).*exp(-umFrames./B(2)) - sfull,[0.5,1],[0 1E-3],[1 Inf]);
     smod = BETA(1)+(1-BETA(1)).*exp(-umFrames./BETA(2));
 end
 
@@ -107,7 +108,8 @@ function [smod,BETA] = plotS2Dint(frames,sfull,ims,figSave)
 % Use a finer frame size to plot the model (smoother)
 fineFrames = linspace(frames(1),frames(end),500);
 
-BETA = nlinfit(frames,sfull,@(beta,x) beta(1)+(1-beta(1)).*exp(-x./beta(2)),[0.5, 1]);
+% BETA = nlinfit(frames,sfull,@(beta,x) beta(1)+(1-beta(1)).*exp(-x./beta(2)),[0.5, 1]);
+BETA = lsqnonlin(@(B) B(1)+(1-B(1)).*exp(-frames./B(2)) - sfull,[0.5,1],[0 1E-3],[1 Inf]);
 fitY = BETA(1)+(1-BETA(1)).*exp(-fineFrames./BETA(2));  % Use fineFrames to make figure look good
 smod = BETA(1)+(1-BETA(1)).*exp(-frames./BETA(2));  % Use regular frames so that data lines up in csv
 

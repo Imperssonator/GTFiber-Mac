@@ -4,6 +4,7 @@ function settings = get_settings(handles)
 settings.nmWid = str2num(get(handles.nmWid,'String'));
 
 % Get filter settings
+settings.invert = get(handles.invertColor,'Value');
 settings.thnm = str2num(get(handles.tophatSize,'String'));
 settings.noisenm = str2num(get(handles.noiseArea,'String'));
 settings.maxBranchSizenm = str2num(get(handles.maxBranchSize,'String'));
@@ -17,7 +18,7 @@ settings.threshFig = get(handles.threshFig,'Value');
 settings.noiseRemFig = get(handles.noiseRemFig,'Value');
 settings.skelFig = get(handles.skelFig,'Value');
 settings.skelTrimFig = get(handles.skelTrimFig,'Value');
-settings.threshMethod = get(handles.threshMethod,'String');
+settings.threshMethod = get(handles.threshMethod,'Value');
 
 settings.figSave = get(handles.saveFigs,'Value');
 

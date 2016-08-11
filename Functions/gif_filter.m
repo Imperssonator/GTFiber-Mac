@@ -36,10 +36,12 @@ imwrite(curFrame,c_map,gif_file,'gif','WriteMode','append','DelayTime',settings.
 
 % Threshold and Clean
 waitbar(0.7,hwait,'Threshold and Clean...');
-if strcmp(settings.threshMethod,'Adaptive Threshold Surface')
-    ims.CEDbw = YBSimpleSeg(ims.CEDtophat);
-else
-    ims.CEDbw = im2bw(ims.CEDtophat,settings.globalThresh);
+switch settings.threshMethod
+    case 1
+        ims.CEDbw = YBSimpleSeg(ims.CEDtophat);
+        disp('used adaptive')
+    case 2
+        ims.CEDbw = im2bw(ims.CEDtophat,settings.globalThresh);
 end
 
 % Put Threshold in the Gif
