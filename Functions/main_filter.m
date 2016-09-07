@@ -23,9 +23,10 @@ end
 
 % Run Top Hat Filter
 waitbar(0.5,hwait,'Top Hat Filter...');
-ims.CEDtophat = imtophat(ims.CEDgray,strel('disk',settings.thpix));
+ims.CEDtophat = imadjust(imtophat(ims.CEDgray,strel('disk',settings.thpix)));
 if settings.topHatFig
     figure; imshow(ims.CEDtophat)
+%     figure; imtool(ims.CEDtophat)
 end
 
 % Threshold and Clean
@@ -39,11 +40,13 @@ switch settings.threshMethod
 end
 if settings.threshFig
     figure; imshow(ims.CEDbw)
+%     figure; imtool(ims.CEDbw)
 end
 
 ims.CEDclean = bwareaopen(ims.CEDbw,settings.noisepix);
 if settings.noiseRemFig
     figure; imshow(ims.CEDclean)
+%     figure; imtool(ims.CEDclean)
 end
 
 % Skeletonize
@@ -51,18 +54,20 @@ waitbar(0.8,hwait,'Skeletonization...');
 ims.skel = bwmorph(ims.CEDclean,'skel',Inf);
 if settings.skelFig
     figure; imshow(ims.skel)
+%     figure; imtool(ims.skel)
 end
 
 ims.skelTrim = cleanSkel(ims.skel,settings.maxBranchSize);
 % ims.skelTrim = bwareaopen(ims.skelTrim,settings.maxStubLen);
 if settings.skelTrimFig
     figure; imshow(ims.skelTrim)
+%     figure; imtool(ims.skelTrim)
 end
 
 % Generate Angle Map by getting new angles from CED
 waitbar(0.9,hwait,'Recovering Orientations...');
 Options.T = 1;
-[~, ims.v1xn, ims.v1yn] = CoherenceFilter(ims.CEDclean,Options);
+[~, ims.v1xn, ims.v1yn] = CoherenceFilter(ims.skelTrim,Options);
 ims.AngMap = atand(ims.v1xn./-ims.v1yn);
 
 save('filter_debug','ims')

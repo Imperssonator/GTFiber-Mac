@@ -30,7 +30,7 @@ function varargout = GTFiber(varargin)
 
 % Edit the above text to modify the response to help GTFiber
 
-% Last Modified by GUIDE v2.5 08-Aug-2016 17:40:13
+% Last Modified by GUIDE v2.5 07-Sep-2016 10:06:44
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -212,6 +212,40 @@ histogram(handles.ims.FWD,20)
 
 guidata(hObject, handles);
 
+
+% --- Executes on button press in GetFiberLength.
+function GetFiberLength_Callback(hObject, eventdata, handles)
+% hObject    handle to GetFiberLength (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+if ~isfield(handles,'ims')
+    noload = errordlg('Go to File>Load Image to load an image before filtering.');
+    return
+end
+
+if ~isfield(handles.ims,'AngMap')
+    nofilt = errordlg('"Run Filter" must be executed before results can be displayed');
+    return
+end
+
+% Cluster fiber segments and calculate length
+settings = get_settings(handles);
+settings = pix_settings(settings,handles.ims);
+handles.ims = FiberLengths(handles.ims,settings);
+figure; 
+histogram(handles.ims.FLD,50);
+FiberPlot(handles.ims);
+
+% Sample fiber widths along each fiber
+handles.ims = FiberWidths(handles.ims,settings);
+figure;
+histogram(handles.ims.FWD,50);
+
+IMS = handles.ims;
+save('IMS','IMS')
+
+guidata(hObject, handles);
 
 % --- Executes on button press in runDir.
 function runDir_Callback(hObject, eventdata, handles)

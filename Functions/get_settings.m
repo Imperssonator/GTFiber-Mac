@@ -43,6 +43,7 @@ settings.frameStepnmWide = str2num(get(handles.frameStep,'String'));
 
 % Fiber Width calc settings
 settings.fibWidSamps = str2num(get(handles.fibWidSamps,'String'));
+settings.fibWidSamps2 = 7;
 
 % Gif Export Settings
 settings.initDelay = 1;

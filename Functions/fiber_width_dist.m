@@ -4,7 +4,7 @@ function FWD = fiber_width_dist(ims,settings)
 % X INCREASES DOWN
 % Y INCREASES RIGHT
 
-numSamps = settings.fibWidSamps;
+numSamps = min(settings.fibWidSamps,sum(sum(ims.skelTrim)));
 angMap = ims.AngMap;
 skel = ims.skelTrim;
 nmPix = ims.nmPix;
@@ -15,14 +15,18 @@ imtool(thresh)
 
 skelList = find(skel);  % Linear indices of pixels in skeletons
 skelSamp = datasample(skelList,numSamps,'Replace',false);
+skelSamp = skelSamp(~isnan(angMap(skelSamp)));  % Remove samples where the skeleton was on a weird artifact
+numSamps = length(skelSamp);
 
 FWD = zeros(size(skelSamp));
 
 for i = 1:numSamps
     
+    
     % Set up search vectors and origin
     
     s = skelSamp(i);
+    disp(s)
     ang_i = angMap(s);  % Fiber orientation at this skeletal pixel, 0 = horizontal
     wvec = [cosd(ang_i), sind(ang_i)];    % unit vector pointing along width path... the x->y and y->-x axis flip makes this line work.......
     orig_pix = ind2subv([m,n],s) - [0.5, 0.5];  % center of skeletal pixel in pixel space
@@ -32,7 +36,7 @@ for i = 1:numSamps
     
     numPts = 100;
     n2 = 2*(1:numPts)'-1;
-    T = [n2*sign(wvec(1))/(2*wvec(1)), n2*sign(wvec(2))/(2*wvec(2))];
+    T = [n2*sign(wvec(1))/(2*wvec(1)), n2*sign(wvec(2))/(2*wvec(2))];   % Somehow I derived this...
     Tx = [T(:,1), (1:numPts)', ones(numPts,1)];
     Ty = [T(:,2), (1:numPts)', ones(numPts,1)+1];
     Tlist = [Tx;Ty];
@@ -50,6 +54,7 @@ for i = 1:numSamps
             next_pt = [ceil(gridpt(1)), round(gridpt(2))+(wvec(2)>0)]; % If moving right, check next pixel to right, if left, check left
         end
         
+%         disp(next_pt)
         if next_pt(1)>m || next_pt(1)<1 || next_pt(2)>n || next_pt(2)<1
             check = 1;
         elseif thresh(next_pt(1),next_pt(2)) == 0
