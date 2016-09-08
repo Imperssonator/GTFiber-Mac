@@ -1,20 +1,20 @@
 function IMS = FiberLengths(IMS,settings)
 
 
-%% Hard Coded:
-
-SearchLat = 90;
-SearchLong = 200;
-MinLength = 30;         % Any segment less than 30 nm long will be cleaned out
-ODiffTol = 50;
-
 %% Image Characteristics
 % load(IMS)
 w = IMS.nmWid;                            % width of image in nm
 % S = IMS.skelTrim;                       % The skeleton segments
 
+%% Hard Coded:
+
+SearchLat = 0.018*w; % Now fraction of image width (was 90);
+SearchLong = .04*w; % was 200;
+MinLength = settings.maxBranchSizenm; % was 30;         % Any segment less than 'maxBranchSizenm' nm long will be cleaned out
+ODiffTol = 50;
+
 %% Skeleton Cleaning - BETA - should incorporate with main filter
-skelClose = imclose(IMS.skelTrim,strel('disk',1));
+skelClose = bwmorph(imclose(IMS.skelTrim,strel('disk',1)),'skeleton',Inf);
 S = cleanSkel(skelClose,settings.maxBranchSize);
 Sbranch = bwmorph(S,'branchpoints');
 BigBranch = imdilate(Sbranch,ones(3));
@@ -135,10 +135,10 @@ for j = 1:NumSegs %1155:1155
         EPMatch = KernSearch(Ends,RotKern,RotKStart,EP);
         EndLib(j,ep).MatchSubs = EPMatch;            % This is the matrix of subscript indices of endpoints that match with this endpoint
 
-        disp('____________')
-        disp(j)
-        disp(EPs)
-        disp(EPMatch)
+%         disp('____________')
+%         disp(j)
+%         disp(EPs)
+%         disp(EPMatch)
         if not(isempty(EPMatch))
             EndLib(j,ep).MatchDists = CalcMatchDists(EndLib(j,ep),pixdim);
             EndLib(j,ep).MatchSegs = GetMatchSegs(EndLib(j,ep),SLabel);
@@ -420,8 +420,8 @@ function MatchEnds = GetMatchEnds(EPMatch,Sub2End)
 MatchEnds = zeros(m,2);
 
 for i = 1:m
-    disp('----')
-    disp(EPMatch(i,:))
+%     disp('----')
+%     disp(EPMatch(i,:))
     MatchEnds(i,:) = Sub2End{EPMatch(i,1),EPMatch(i,2)};
 end
 

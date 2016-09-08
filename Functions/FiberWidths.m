@@ -16,16 +16,18 @@ FL = ims.FiberLabels;
 for i = 1:length(ims.Fibers)
     
     skel_i = FL==i;
+    numPix = sum(sum(skel_i));
+    minSamps = min(numPix,numSamps);    % Make sure there are enough pixels to take 7 samples
     sl = find(skel_i);
-    skelSamp = datasample(sl,numSamps,'Replace',false);
+    skelSamp = datasample(sl,minSamps,'Replace',false);
     skelSamp = skelSamp(~isnan(angMap(skelSamp)));  % Remove samples where the skeleton was on a weird artifact
     fibWidSamps = zeros(size(skelSamp,2),1);
     
     for samp = 1:length(skelSamp)
-        disp('____')
-        disp(size(angMap))
+%         disp('____')
+%         disp(size(angMap))
         coord = ind2subv(size(bw),skelSamp(samp));
-        disp(coord)
+%         disp(coord)
         fibWidSamps(samp) = WidthSample(bw,angMap,coord);
     end
     

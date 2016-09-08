@@ -30,7 +30,7 @@ function varargout = GTFiber(varargin)
 
 % Edit the above text to modify the response to help GTFiber
 
-% Last Modified by GUIDE v2.5 07-Sep-2016 10:06:44
+% Last Modified by GUIDE v2.5 08-Sep-2016 11:57:14
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -189,30 +189,6 @@ settings.figSave = 0;   % don't try to save figure when called by this button
 guidata(hObject, handles);
 
 
-% --- Executes on button press in GetFiberWidth.
-function GetFiberWidth_Callback(hObject, eventdata, handles)
-% hObject    handle to GetFiberWidth (see GCBO)
-% eventdata  reserved - to be defined in a future version of MATLAB
-% handles    structure with handles and user data (see GUIDATA)
-
-if ~isfield(handles,'ims')
-    noload = errordlg('Go to File>Load Image to load an image before filtering.');
-    return
-end
-
-if ~isfield(handles.ims,'AngMap')
-    nofilt = errordlg('"Run Filter" must be executed before results can be displayed');
-    return
-end
-
-settings = get_settings(handles);
-handles.ims.FWD = fiber_width_dist(handles.ims,settings);
-figure; 
-histogram(handles.ims.FWD,20)
-
-guidata(hObject, handles);
-
-
 % --- Executes on button press in GetFiberLength.
 function GetFiberLength_Callback(hObject, eventdata, handles)
 % hObject    handle to GetFiberLength (see GCBO)
@@ -234,16 +210,19 @@ settings = get_settings(handles);
 settings = pix_settings(settings,handles.ims);
 handles.ims = FiberLengths(handles.ims,settings);
 figure; 
-histogram(handles.ims.FLD,50);
+histogram(handles.ims.FLD,50); title('Fiber Length Distribution')
 FiberPlot(handles.ims);
 
 % Sample fiber widths along each fiber
 handles.ims = FiberWidths(handles.ims,settings);
 figure;
-histogram(handles.ims.FWD,50);
+histogram(handles.ims.FWD,50); title('Fiber Width Distribution');
 
 IMS = handles.ims;
+FiberData = [[IMS.Fibers(:).Length]', [IMS.Fibers(:).Width]', [IMS.Fibers(:).Length]'./[IMS.Fibers(:).Width]'];
+
 save('IMS','IMS')
+save([IMS.imName, '_FiberData'],'FiberData')
 
 guidata(hObject, handles);
 
@@ -284,9 +263,50 @@ settings.figSave = get(handles.saveFigs,'Value');
 settings.fullOP = 1;
 
 csvCell = runDir(folderPath,settings);
+% FLCell = runDirFLD(folderPath,settings);
 cell2csv(saveFilePath, csvCell, ',', 1999, '.');
 % save([folderPath, fileName{1}, '.mat'],'csvCell')
 
+
+% --- Executes on button press in runDirFLD.
+function runDirFLD_Callback(hObject, eventdata, handles)
+% hObject    handle to runDirFLD (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% Get folder and save file name
+folderPath = uigetdir;
+if isequal(folderPath, 0); return; end % Cancel button pressed
+if ispc
+    separator = '\';
+else
+    separator = '/';
+end
+
+folderPath = [folderPath, separator];
+
+% Get name for results file
+% prompt = {'Save results with file name (no extension necessary):'};
+% dlg_title = 'Save File Name';
+% num_lines = 1;
+% fileName = inputdlg(prompt,dlg_title,num_lines);
+% saveFilePath = [folderPath, fileName{1}, '.csv'];
+
+% Build up settings from GUI, turn off all figure displays
+settings = get_settings(handles);
+settings.CEDFig = 0;
+settings.topHatFig = 0;
+settings.threshFig = 0;
+settings.noiseRemFig = 0;
+settings.skelFig = 0;
+settings.skelTrimFig = 0;
+settings.figSwitch = 0;
+settings.figSave = get(handles.saveFigs,'Value');
+settings.fullOP = 1;
+
+runDirFLD(folderPath,settings);
+% save([folderPath, fileName{1}, '.mat'],'csvCell')
 
 
 function gauss_Callback(hObject, eventdata, handles)
@@ -477,6 +497,18 @@ function nmWid_Callback(hObject, eventdata, handles)
 
 % Hints: get(hObject,'String') returns contents of nmWid as text
 %        str2double(get(hObject,'String')) returns contents of nmWid as a double
+
+nmWid = str2num(get(handles.nmWid,'String'));
+if ~isempty(nmWid)
+    set(handles.gauss,'String',num2str(nmWid*10/5000));
+    set(handles.rho,'String',num2str(nmWid*30/5000));
+    set(handles.tophatSize,'String',num2str(nmWid*30/5000));
+    set(handles.noiseArea,'String',num2str(nmWid^2*1500/5000^2));
+    set(handles.maxBranchSize,'String',num2str(nmWid*80/5000));
+end
+
+guidata(hObject, handles);
+
 
 
 % --- Executes during object creation, after setting all properties.
@@ -701,3 +733,5 @@ switch get(handles.invertColor,'Value')
 end
 
 guidata(hObject, handles);
+
+
