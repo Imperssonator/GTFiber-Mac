@@ -70,7 +70,7 @@ Options.T = 1;
 [~, ims.v1xn, ims.v1yn] = CoherenceFilter(ims.skelTrim,Options);
 ims.AngMap = atand(ims.v1xn./-ims.v1yn);
 
-save('filter_debug','ims')
+% save('filter_debug','ims')
 
 close(hwait)
 
