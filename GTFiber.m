@@ -30,7 +30,7 @@ function varargout = GTFiber(varargin)
 
 % Edit the above text to modify the response to help GTFiber
 
-% Last Modified by GUIDE v2.5 08-Sep-2016 11:57:14
+% Last Modified by GUIDE v2.5 09-Sep-2016 15:35:48
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -735,5 +735,3 @@ switch get(handles.invertColor,'Value')
 end
 
 guidata(hObject, handles);
-
-
