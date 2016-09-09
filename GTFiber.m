@@ -30,7 +30,7 @@ function varargout = GTFiber(varargin)
 
 % Edit the above text to modify the response to help GTFiber
 
-% Last Modified by GUIDE v2.5 05-May-2016 12:15:07
+% Last Modified by GUIDE v2.5 08-Sep-2016 11:57:14
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -106,6 +106,8 @@ dlg_title = 'Image Scale';
 num_lines = 1;
 answer = inputdlg(prompt,dlg_title,num_lines);
 set(handles.nmWid,'String',answer{1})
+
+nmWid_Callback(hObject, eventdata, handles);
 
 imfile = [folderpath, filename];
 
@@ -186,7 +188,45 @@ settings.figSwitch = 1; % display figure if it's called by this button
 settings.figSave = 0;   % don't try to save figure when called by this button
 [handles.ims.frames, handles.ims.sfull, handles.ims.smod] = op2d_am(handles.ims, settings);
 
+guidata(hObject, handles);
 
+
+% --- Executes on button press in GetFiberLength.
+function GetFiberLength_Callback(hObject, eventdata, handles)
+% hObject    handle to GetFiberLength (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+if ~isfield(handles,'ims')
+    noload = errordlg('Go to File>Load Image to load an image before filtering.');
+    return
+end
+
+if ~isfield(handles.ims,'AngMap')
+    nofilt = errordlg('"Run Filter" must be executed before results can be displayed');
+    return
+end
+
+% Cluster fiber segments and calculate length
+settings = get_settings(handles);
+settings = pix_settings(settings,handles.ims);
+handles.ims = FiberLengths(handles.ims,settings);
+figure; 
+histogram(handles.ims.FLD,50); title('Fiber Length Distribution')
+FiberPlot(handles.ims);
+
+% Sample fiber widths along each fiber
+handles.ims = FiberWidths(handles.ims,settings);
+figure;
+histogram(handles.ims.FWD,50); title('Fiber Width Distribution');
+
+IMS = handles.ims;
+FiberData = [[IMS.Fibers(:).Length]', [IMS.Fibers(:).Width]', [IMS.Fibers(:).Length]'./[IMS.Fibers(:).Width]'];
+
+save('IMS','IMS')
+save([IMS.imName, '_FiberData'],'FiberData')
+
+guidata(hObject, handles);
 
 % --- Executes on button press in runDir.
 function runDir_Callback(hObject, eventdata, handles)
@@ -225,9 +265,50 @@ settings.figSave = get(handles.saveFigs,'Value');
 settings.fullOP = 1;
 
 csvCell = runDir(folderPath,settings);
+% FLCell = runDirFLD(folderPath,settings);
 cell2csv(saveFilePath, csvCell, ',', 1999, '.');
 % save([folderPath, fileName{1}, '.mat'],'csvCell')
 
+
+% --- Executes on button press in runDirFLD.
+function runDirFLD_Callback(hObject, eventdata, handles)
+% hObject    handle to runDirFLD (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+
+% Get folder and save file name
+folderPath = uigetdir;
+if isequal(folderPath, 0); return; end % Cancel button pressed
+if ispc
+    separator = '\';
+else
+    separator = '/';
+end
+
+folderPath = [folderPath, separator];
+
+% Get name for results file
+% prompt = {'Save results with file name (no extension necessary):'};
+% dlg_title = 'Save File Name';
+% num_lines = 1;
+% fileName = inputdlg(prompt,dlg_title,num_lines);
+% saveFilePath = [folderPath, fileName{1}, '.csv'];
+
+% Build up settings from GUI, turn off all figure displays
+settings = get_settings(handles);
+settings.CEDFig = 0;
+settings.topHatFig = 0;
+settings.threshFig = 0;
+settings.noiseRemFig = 0;
+settings.skelFig = 0;
+settings.skelTrimFig = 0;
+settings.figSwitch = 0;
+settings.figSave = get(handles.saveFigs,'Value');
+settings.fullOP = 1;
+
+runDirFLD(folderPath,settings);
+% save([folderPath, fileName{1}, '.mat'],'csvCell')
 
 
 function gauss_Callback(hObject, eventdata, handles)
@@ -419,6 +500,18 @@ function nmWid_Callback(hObject, eventdata, handles)
 % Hints: get(hObject,'String') returns contents of nmWid as text
 %        str2double(get(hObject,'String')) returns contents of nmWid as a double
 
+nmWid = str2num(get(handles.nmWid,'String'));
+if ~isempty(nmWid)
+    set(handles.gauss,'String',num2str(nmWid*10/5000));
+    set(handles.rho,'String',num2str(nmWid*30/5000));
+    set(handles.tophatSize,'String',num2str(nmWid*30/5000));
+    set(handles.noiseArea,'String',num2str(nmWid^2*1500/5000^2));
+    set(handles.maxBranchSize,'String',num2str(nmWid*80/5000));
+end
+
+guidata(hObject, handles);
+
+
 
 % --- Executes during object creation, after setting all properties.
 function nmWid_CreateFcn(hObject, eventdata, handles)
@@ -578,3 +671,69 @@ function widthText_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to widthText (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
+
+
+
+function fibWidSamps_Callback(hObject, eventdata, handles)
+% hObject    handle to fibWidSamps (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of fibWidSamps as text
+%        str2double(get(hObject,'String')) returns contents of fibWidSamps as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function fibWidSamps_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to fibWidSamps (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+% --------------------------------------------------------------------
+function Make_Gif_Callback(hObject, eventdata, handles)
+% hObject    handle to Make_Gif (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+if ~isfield(handles,'ims')
+    noload = errordlg('Go to File>Load Image to load an image before filtering.');
+    return
+end
+
+settings = get_settings(handles);
+[settings, ims] = pix_settings(settings,handles.ims);
+handles.ims = ims;
+gif_filter(handles.ims,settings);
+
+settings.figSwitch = 1; % Gotta turn on figSwitch to make the figure
+settings.figSave = 0;   % No need to save
+gif_op2d_am(handles.ims,settings);
+
+guidata(hObject, handles);
+
+
+% --- Executes on button press in invertColor.
+function invertColor_Callback(hObject, eventdata, handles)
+% hObject    handle to invertColor (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hint: get(hObject,'Value') returns toggle state of invertColor
+
+switch get(handles.invertColor,'Value')
+    case 1
+        figure; imshow(imcomplement(handles.ims.gray));
+    case 0
+        figure; imshow(handles.ims.gray)
+end
+
+guidata(hObject, handles);
+
+

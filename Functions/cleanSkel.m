@@ -19,7 +19,7 @@ for ind = find(NubsCheck)'
     end
 end
 
-skel2=bwareaopen(skel2,2);
+skel2=bwareaopen(skel2,maxBranchLen);
 
 end
 
