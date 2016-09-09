@@ -1,6 +1,6 @@
 function ims = initImgData(imfile)
 
-img = imread(imfile);
+[img, c_map] = imread(imfile);
 if size(img,3)>3
     img = img(:,:,1:3);
 end
@@ -19,6 +19,7 @@ imNamePath = imfile(1:LD-1);    % whole path without extension
 
 ims = struct();
 ims.img = img;
+ims.c_map = c_map;
 ims.imName = imName;
 ims.imPath = imPath;
 ims.imNamePath = imNamePath;
