@@ -107,6 +107,8 @@ num_lines = 1;
 answer = inputdlg(prompt,dlg_title,num_lines);
 set(handles.nmWid,'String',answer{1})
 
+nmWid_Callback(hObject, eventdata, handles);
+
 imfile = [folderpath, filename];
 
 % Initialize the internal image data structure, "ims"
