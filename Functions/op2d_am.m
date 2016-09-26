@@ -72,7 +72,12 @@ close(hwait2d)
 
 % Convert frame sizes to microns and either make a figure or do the model
 % fit to send back to the csv file if using runDir
-umFrames = (frames.*2+1).*nmPix/1000;
+umFrames = (frames.*2+1).*nmPix/1000;   % Frames in units of microns
+
+% Remove NaN values from sfull if that happened by accident
+umFrames = umFrames(~isnan(sfull));
+sfull = sfull(~isnan(sfull));
+
 if figSwitch || figSave
     [smod, BETA] = plotS2Dint(umFrames,sfull,ims,figSave);
 else

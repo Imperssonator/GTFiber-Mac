@@ -210,10 +210,12 @@ end
 % Cluster fiber segments and calculate length
 settings = get_settings(handles);
 settings = pix_settings(settings,handles.ims);
+handles.ims = StitchFibers(handles.ims,settings);
+
 handles.ims = FiberLengths(handles.ims,settings);
-figure; 
+figure;
 histogram(handles.ims.FLD,50); title('Fiber Length Distribution')
-FiberPlot(handles.ims);
+FiberVecPlot_stitch(handles.ims);
 
 % Sample fiber widths along each fiber
 handles.ims = FiberWidths(handles.ims,settings);
@@ -224,7 +226,7 @@ IMS = handles.ims;
 FiberData = [[IMS.Fibers(:).Length]', [IMS.Fibers(:).Width]', [IMS.Fibers(:).Length]'./[IMS.Fibers(:).Width]'];
 
 save('IMS','IMS')
-save([IMS.imName, '_FiberData'],'FiberData')
+% save([IMS.imName, '_FiberData'],'FiberData')
 
 guidata(hObject, handles);
 
@@ -507,6 +509,8 @@ if ~isempty(nmWid)
     set(handles.tophatSize,'String',num2str(nmWid*30/5000));
     set(handles.noiseArea,'String',num2str(nmWid^2*1500/5000^2));
     set(handles.maxBranchSize,'String',num2str(nmWid*80/5000));
+    set(handles.frameStep,'String',num2str(nmWid*200/5000));
+    set(handles.gridStep,'String',num2str(nmWid*400/5000));
 end
 
 guidata(hObject, handles);
