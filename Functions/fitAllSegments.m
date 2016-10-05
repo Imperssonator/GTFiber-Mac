@@ -1,7 +1,10 @@
-function IMS = fitAllSegments(IMS)
+function ims = fitAllSegments(ims,settings)
 
+if isfield(ims,'fibSegs')
+    ims = rmfield(ims,'fibSegs');
+end
 
-numSegs = max(max(IMS.SegLabels));
+numSegs = max(max(ims.SegLabels));
 
 % The first goal here is to take individual segments and turn them into a
 % list of pixels where the list increases by distance from one end of the
@@ -10,28 +13,31 @@ numSegs = max(max(IMS.SegLabels));
 high_curve = [];
 
 for i = 1:numSegs
-    coord = IMS.EndLib(i,1).EPCoord;
-    end_ind = sub2ind(size(IMS.SegLabels),coord(1),coord(2));
-    dd = bwdistgeodesic(IMS.SegLabels==i,end_ind);
-    seg_inds = find(IMS.SegLabels==i);
+    
+%     disp(i)
+    
+    coord = ims.EndLib(i,1).EPCoord;
+    end_ind = sub2ind(size(ims.SegLabels),coord(1),coord(2));
+    dd = bwdistgeodesic(ims.SegLabels==i,end_ind);
+    seg_inds = find(ims.SegLabels==i);
     vals = dd(seg_inds);
     seg_list = [seg_inds, vals];
     sorted_seg = sortrows(seg_list,2);
-    IMS.fibSegs(i).sortPixInds = sorted_seg(:,1);
-    IMS.fibSegs(i).sortPixSubs = ind2subv(size(IMS.SegLabels),sorted_seg(:,1));
+    ims.fibSegs(i).sortPixInds = sorted_seg(:,1);
+    ims.fibSegs(i).sortPixSubs = ind2subv(size(ims.SegLabels),sorted_seg(:,1));
     
-    IMS = FitSegment(IMS,i);
+    ims = FitSegment(ims,settings,i);
     
-    high_curve = [high_curve; sorted_seg(IMS.fibSegs(i).curv>1e-03,1)];
+%     high_curve = [high_curve; sorted_seg(ims.fibSegs(i).curv>1e-03,1)];
 end
 
-high_curve_im = zeros(size(IMS.SegLabels));
-high_curve_im(high_curve) = 1;
+% high_curve_im = zeros(size(ims.SegLabels));
+% high_curve_im(high_curve) = 1;
 % imtool(high_curve_im)
 
 end
 
-function IMS = FitSegment(IMS,segNum)
+function ims = FitSegment(ims,settings,segNum)
 
 % Basically taking the active contours algorithm from FiberApp and giving it
 % an extremely good initial guess - just a list of the pixels that are the
@@ -44,20 +50,20 @@ function IMS = FitSegment(IMS,segNum)
 % if FA.sel == 0; return; end
 
 
-fibSegImg = IMS.SegLabels==segNum;
+fibSegImg = ims.SegLabels==segNum;
 
 [gradX, gradY] = gradient2Dx2(fibSegImg);
     
 % Short names for fiber tracking parameters and data
-xy_col = IMS.fibSegs(segNum).sortPixSubs;    % column vector of i,j coords of pixels in order
+xy_col = ims.fibSegs(segNum).sortPixSubs;    % column vector of i,j coords of pixels in order
 xy = flipud(xy_col') - 0.5;
 a = 0;
-b = 20;
+b = 0;
 g = 20;
 k1 = 20;
 k2 = 10;
 fiberIntensity = 1;
-fiberStep = 2;  % Number of pixels a discrete step should take
+fiberStep = settings.fiberStep;  % Number of pixels a discrete step should take
 
 % Apply fitting algorithm FA.iterations times
 for k = 1:10
@@ -115,22 +121,20 @@ for k = 1:10
     xy = distributePoints((g*xy+vf)/M, fiberStep);
 end
 
-if length(xy)>5
+if length(xy)>3
     xy_vec = diff(xy,1,2);
     dots = sum(xy_vec(:,1:end-1).*xy_vec(:,2:end),1) ./...
            (sqrt(sum(xy_vec(:,1:end-1).^2,1)) .* sqrt(sum(xy_vec(:,2:end).^2,1)));  % This is just stupid
     dots(dots>1) = 1;
     angs = acos(dots);
-    curv = diff(angs,2)/(2*fiberStep*IMS.nmPix);    % Curvature in radians/nm using centered finite diffs
-    curv = [0, 0, curv, 0, 0];
 else
-    curv = zeros(1,size(xy,2));
+    angs = zeros(1,size(xy,2)-1);
 end
 
 % Save fiber data
-IMS.fibSegs(segNum).curv = abs(curv);
-IMS.fibSegs(segNum).xy = xy;
-IMS.EndLib(segNum,1).EVCoord = xy(:,1);             % These are coordinates in FiberApp xy space (x=j, y=i) of the endpoints
-IMS.EndLib(segNum,2).EVCoord = xy(:,end);
+ims.fibSegs(segNum).angs = angs;
+ims.fibSegs(segNum).xy = xy;
+ims.EndLib(segNum,1).EVCoord = xy(:,1);             % These are coordinates in FiberApp xy space (x=j, y=i) of the endpoints
+ims.EndLib(segNum,2).EVCoord = xy(:,end);
 end
 

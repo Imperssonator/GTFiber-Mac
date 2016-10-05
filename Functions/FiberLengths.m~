@@ -1,9 +1,0 @@
-function IMS = FiberLengths(IMS,settings)
-
-numFibs = length(IMS.Fibers);
-FLD = zeros(numFibs,1);
-
-for i = 1:length(IMS.Fibers)
-    
-
-end

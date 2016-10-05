@@ -1,4 +1,4 @@
-function out = RemoveHolyShit(IM)
+function out = RemoveHoles(IM)
 
 L = bwlabel(IM);
 RP = regionprops(IM,'EulerNumber');

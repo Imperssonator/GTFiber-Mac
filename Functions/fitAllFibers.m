@@ -1,4 +1,4 @@
-function IMS = fitAllFibers(IMS)
+function IMS = fitAllFibers(IMS,settings)
 
 numFibs = max(max(IMS.FiberLabels));
 
@@ -6,10 +6,9 @@ numFibs = max(max(IMS.FiberLabels));
 % list of pixels where the list increases by distance from one end of the
 % segment, which is quantified by the bwdistgeodesic function
 
-high_curve = [];
-
 for i = 1:numFibs
-    IMS = FitFiber(IMS,i);
+%     disp(i)
+    IMS = FitFiber(IMS,settings,i);
 %     high_curve = [high_curve; sorted_seg(IMS.fibSegs(i).curv>1e-03,1)];
 end
 
@@ -19,7 +18,7 @@ end
 
 end
 
-function IMS = FitFiber(IMS,fibNum)
+function IMS = FitFiber(IMS,settings,fibNum)
 
 % Basically taking the active contours algorithm from FiberApp and giving it
 % an extremely good initial guess - just a list of the pixels that are the
@@ -36,7 +35,7 @@ for i = 1:numFibSegs
     coord = IMS.EndLib(StartInds(i)).EPCoord;                       % Get grid coordinates of starting endpoint
     end_ind = sub2ind(size(IMS.SegLabels),coord(1),coord(2));       % Get grid linear index of starting endpoint
     dd = bwdistgeodesic(IMS.SegLabels==FiberSegs(i),end_ind);       % Get geodesic distances of segment pixels from selected endpoint
-    seg_inds = find(IMS.SegLabels==FiberSegs(i));                              % Get linear indices of pixels in this segment
+    seg_inds = find(IMS.SegLabels==FiberSegs(i));                   % Get linear indices of pixels in this segment
     vals = dd(seg_inds);                                            % Get the values of these pixels' geo. distances
     seg_list = [seg_inds, vals];                                    % Make a table
     sorted_seg = sortrows(seg_list,2);                              % Sort it
@@ -57,7 +56,7 @@ g = 20;
 k1 = 20;
 k2 = 10;
 fiberIntensity = 255;
-fiberStep = 2;  % Number of pixels a discrete step should take
+fiberStep = settings.fiberStep;  % Number of pixels a discrete step should take
 
 % Apply fitting algorithm FA.iterations times
 for k = 1:10
@@ -115,20 +114,18 @@ for k = 1:10
     xy = distributePoints((g*xy+vf)/M, fiberStep);
 end
 
-if length(xy)>5
+if length(xy)>3
     xy_vec = diff(xy,1,2);
     dots = sum(xy_vec(:,1:end-1).*xy_vec(:,2:end),1) ./...
            (sqrt(sum(xy_vec(:,1:end-1).^2,1)) .* sqrt(sum(xy_vec(:,2:end).^2,1)));  % This is just stupid
     dots(dots>1) = 1;
     angs = acos(dots);
-    curv = diff(angs,2)/(2*fiberStep*IMS.nmPix);    % Curvature in radians/nm using centered finite diffs
-    curv = [0, 0, curv, 0, 0];
 else
-    curv = zeros(1,size(xy,2));
+    angs = zeros(1,size(xy,2)-1);
 end
 
 % Save fiber data
-IMS.Fibers(fibNum).curv = abs(curv);
+IMS.Fibers(fibNum).angs = angs;
 IMS.Fibers(fibNum).xy = xy;
 
 end

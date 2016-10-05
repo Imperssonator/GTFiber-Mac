@@ -1,5 +1,27 @@
 function IMS = StitchFibers(IMS,settings)
 
+% 1. Skeleton Cleaning
+
+% 2. Label segments and Make EndLib
+
+% 3. Vectorize Segments - once we are here, we do not go back
+
+% 4. Break high curvatures
+
+% 4.5. Remove Non-conforming widths (measure widths)
+
+% 5. Rebuild EndLib
+
+% 6. Match Search, Ranking/Pairing, Percolation
+
+% 7. Vectorize Fibers
+
+% 8. Break high curvatures again
+
+% 9. Return Fibers for Length/Width/Orientational Analysis
+
+hwait = waitbar(0,'Stitching Fibers...');
+
 %% Image Characteristics
 % load(IMS)
 w = IMS.nmWid;                              % width of image in nm
@@ -13,6 +35,7 @@ ODiffTol = 40;                              % Probably going to phase this out f
 
 
 %% Skeleton Cleaning - BETA - should incorporate with main filter
+waitbar(0.1,hwait,'Cleaning Skeleton...');
 skelClose = bwmorph(imclose(IMS.skelTrim,strel('disk',1)),'skeleton',Inf);
 S = cleanSkel(skelClose,settings.maxBranchSize);
 Sbranch = bwmorph(S,'branchpoints');
@@ -32,6 +55,7 @@ SFib = RemoveHoles(SFib);
 
 
 %% Building up Utility Variables and Lookup functions
+waitbar(0.2,hwait,'Building Utility Variables...');
 RP = regionprops(SFib,'Area','Orientation');    % Grab region props for all the segments
 SegLabels = bwlabel(SFib,8);                       % Create an image where their labels correspond to the order regionprops found them in
 EndsImg = bwmorph(SFib,'endpoints');            % Also create a binary matrix of the segment endpoints
@@ -67,14 +91,16 @@ IMS.EndLib = EndLib;
 
 
 %% Get Active Contour Fits of all segments
+waitbar(0.3,hwait,'Fitting Fiber Segments...');
 
-IMS = fitAllSegments(IMS);
+IMS = fitAllSegments(IMS,settings);
 % Now we will have IMS.fibSegs, which has the vectorized versions of each
 % segment
 
 
 %% Make Search Kernels
 
+waitbar(0.4,hwait,'Running Projection Search...')
 % First build the search kernel, which will look out from each endpoint of
 % a segment for other endpoints
 % It is 90 x 200 nm, a horizontal bar
@@ -142,6 +168,7 @@ end
 
 %% Ranking Matches
 
+waitbar(0.7,hwait,'Scoring Matches...')
 disp('Ranking Results...')
 
 MatchMatrix1 = sparse(zeros(NumEnds));                       % EndIndex = (en-1)*NumEnds+j
@@ -193,12 +220,37 @@ end
 % neither end is already in a 1-1 match. Finally, grant 2-2 matches if
 % neither is in a 1-1 or 1-2 match.
 
+% However, 1-2 matches are tricky because they are not mutually exclusive,
+% and can cause circular references. So we must rank the 1-2 matches by
+% their overall scores, and iteratively add them to the match matrix, while
+% excluding their members from being matched again.
+
+waitbar(0.8,hwait,'Ranking Matches...')
+
 MM11 = MatchMatrix1.*MatchMatrix1';
 Unmatched11 = ~( repmat(sum(MM11,1),size(MM11,1),1) + repmat(sum(MM11,2),1,size(MM11,2)) );
-MM12 = MatchMatrix1.*MatchMatrix2' + MatchMatrix2.*MatchMatrix1';
+
+MM12_init = MatchMatrix1.*MatchMatrix2';
+MM12_init = MM12_init.*Unmatched11;
+[ii jj val] = find(MM12_init);
+MM12_subs=[ii, jj, val];
+MM12_subs(:,4) = arrayfun(@(mm) IMS.EndLib(mm).MatchTable(1,4),MM12_subs(:,1));
+MM12_rank = sortrows(MM12_subs,4);
+MM12 = zeros(size(MM12_init));
+for mi = 1:size(MM12_rank,1)
+    mii = MM12_rank(mi,1); mij = MM12_rank(mi,2);
+    if MM12_init(mii,mij) == 1
+        MM12(mii,mij) = 1;
+        MM12_init(mii,:) = 0; MM12_init(:,mii) = 0;
+        MM12_init(mij,:) = 0; MM12_init(:,mij) = 0;
+    end
+end
+MM12 = MM12+MM12';
 Unmatched12 = ~( repmat(sum(MM12,1),size(MM12,1),1) + repmat(sum(MM12,2),1,size(MM12,2)) );
+
 MM22 = MatchMatrix2.*MatchMatrix2';
-MM_Final = MM11 + MM12.*Unmatched11 + MM22.*(Unmatched11 & Unmatched12); 
+MM22 = MM22.*(Unmatched11 & Unmatched12);
+MM_Final = MM11 + MM12 + MM22;
 
 
 %% Percolation
@@ -216,6 +268,7 @@ MM_Final = MM11 + MM12.*Unmatched11 + MM22.*(Unmatched11 & Unmatched12);
 % Make SegJump 1
 % Continue
 
+waitbar(0.9,hwait,'Percolating Segments...')
 disp('Stitching Fibers...')
 
 DeadEnds = find(sum(MM_Final,2)==0);
@@ -224,11 +277,12 @@ count = 1;
 SegJump = 1;
 CurrEnd = DeadEnds(1);
 F(count).Fiber = [CurrEnd];
+% save('FLDebug')
 
 while not(isempty(DeadEnds))
     if SegJump
         SisterEnd = FindSister(CurrEnd,NumSegs);
-        F(count).Fiber = [F(count).Fiber SisterEnd];
+        F(count).Fiber = [F(count).Fiber, SisterEnd];
         SisterMatch = FindMatch(SisterEnd,MM_Final);
         if isempty(SisterMatch)
             DeadEnds = DeadEnds(2:end);
@@ -251,6 +305,8 @@ end
 
 
 %% Get Fiber Labels
+
+waitbar(0.9,hwait,'Labeling Fibers...')
 disp('Labeling Fibers...')
 
 % A Fiber is a list of segment end indices.
@@ -282,12 +338,13 @@ IMS.SFib = SFib;
 IMS.SegLabels = SegLabels;
 IMS.FiberLabels = FiberLabels;
 
+save('FLDebug')
 
 %% Active Contour Fit of Stitched Fibers
 
-IMS = fitAllFibers(IMS);
-
-save('FLDebug')
+waitbar(0.95, hwait,'Final Fiber Fits')
+IMS = fitAllFibers(IMS,settings);
+close(hwait)
 
 end
 

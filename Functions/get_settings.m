@@ -10,14 +10,6 @@ settings.noisenm = str2num(get(handles.noiseArea,'String'));
 settings.maxBranchSizenm = str2num(get(handles.maxBranchSize,'String'));
 % settings.maxStubLennm = str2num(get(handles.maxStubLen,'String'));
 settings.globalThresh = str2num(get(handles.globalThresh,'String'));
-
-% Get figure display settings
-settings.CEDFig = get(handles.CEDFig,'Value');
-settings.topHatFig = get(handles.topHatFig,'Value');
-settings.threshFig = get(handles.threshFig,'Value');
-settings.noiseRemFig = get(handles.noiseRemFig,'Value');
-settings.skelFig = get(handles.skelFig,'Value');
-settings.skelTrimFig = get(handles.skelTrimFig,'Value');
 settings.threshMethod = get(handles.threshMethod,'Value');
 
 settings.figSave = get(handles.saveFigs,'Value');
@@ -37,6 +29,7 @@ Options.C = 1E-10;
 
 settings.Options = Options;
 
+
 % OP2D calculation settings
 settings.gridStepnm = str2num(get(handles.gridStep,'String'));
 settings.frameStepnmWide = str2num(get(handles.frameStep,'String'));
@@ -44,6 +37,15 @@ settings.frameStepnmWide = str2num(get(handles.frameStep,'String'));
 % Fiber Width calc settings
 % settings.fibWidSamps = str2num(get(handles.fibWidSamps,'String'));
 settings.fibWidSamps2 = 15;
+
+
+% Fiber Fitting Settings
+settings.fiberStep = ceil(str2num(get(handles.fiberStep,'String')));
+settings.maxAngleDeg = str2num(get(handles.maxAngleDeg,'String'));
+% settings.curvLen = str2num(get(handles.curvLen,'String'));
+settings.minWidthnm = str2num(get(handles.minWidth,'String'));
+settings.maxWidthnm = str2num(get(handles.maxWidth,'String'));
+
 
 % Gif Export Settings
 settings.initDelay = 1;

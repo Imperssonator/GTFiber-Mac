@@ -1,83 +1,25 @@
-function IMS = StitchFibers(IMS,settings)
+function ims = SegMatch(ims,settings)
 
 %% Image Characteristics
 % load(IMS)
-w = IMS.nmWid;                              % width of image in nm
-% S = IMS.skelTrim;                         % The skeleton segments
-
-%% Hard Coded:
-SearchLat = 0.02*w;                         % Now fraction of image width (was 90);
-SearchLong = .04*w;                         % was 200;
-MinLength = settings.maxBranchSizenm;       % was 30;         % Any segment less than 'maxBranchSizenm' nm long will be cleaned out
-ODiffTol = 40;                              % Probably going to phase this out for a curvature estimate
-
-
-%% Skeleton Cleaning - BETA - should incorporate with main filter
-skelClose = bwmorph(imclose(IMS.skelTrim,strel('disk',1)),'skeleton',Inf);
-S = cleanSkel(skelClose,settings.maxBranchSize);
-Sbranch = bwmorph(S,'branchpoints');
-BigBranch = imdilate(Sbranch,ones(3));
-S_segs = S&~BigBranch;                      % Find branch points, dilate them, remove the dilated points to separate everything
-
-[m,n] = size(S_segs);
-pixdim = IMS.nmPix;                         % size of a pixel in nm
-pixarea = pixdim^2;
-MinSegLen = ceil(MinLength/pixdim);
-SFib = bwareaopen(S_segs,MinSegLen,8);      % Let's not worry about those shorties (<30nm) for a bit
-
-% It has come to my attention that some skeletal segments have holes which
-% cause problems. Here we remove those segments.
-
-SFib = RemoveHoles(SFib);
-
-
-%% Building up Utility Variables and Lookup functions
-RP = regionprops(SFib,'Area','Orientation');    % Grab region props for all the segments
-SLabel = bwlabel(SFib,8);                       % Create an image where their labels correspond to the order regionprops found them in
-EndsImg = bwmorph(SFib,'endpoints');            % Also create a binary matrix of the segment endpoints
-NumSegs = length(RP);
+w = ims.nmWid;                              % width of image in nm
+NumSegs = length(ims.fibSegs);
 NumEnds = 2*NumSegs;
 
-End2Sub = cell(NumSegs,2);                      % Cell array that converts segment number into subscript indices of its endpoints in image
-Sub2End = cell(m,n);                            % Reverse lookup that converts subscript indices into [segNum, endpoint 1 or 2]
-EndLib = struct();                              % Structure Array that will store lots of info on endpoints, will be numSegs x 2
+%% Hard Coded:
+SearchLat = settings.searchLat;             % Now fraction of image width (was 90);
+SearchLong = settings.searchLong;           % was 200;
+MinLength = settings.maxBranchSizenm;       % Any segment less than 'maxBranchSizenm' nm long will be cleaned out
 
-for i = 1:NumSegs
-    IsoSeg = SLabel == i;                       % IsoSeg = an isolated segment i.e. only white pixels where this segment is
-    SegEnds = IsoSeg.*EndsImg;                  % SegEnds = just the endpoints of this segment
-    [Endi Endj] = find(SegEnds);                % Indices of the end of Segend i
-    End2Sub{i,1} = [Endi(1),Endj(1)];
-    End2Sub{i,2} = [Endi(2),Endj(2)];
-    RP(i).Label = i;
-end
-
-for s = 1:NumSegs
-    for ep = 1:2
-        Coords = End2Sub{s,ep};
-        EndLib(s,ep).EPCoord = End2Sub{s,ep};
-        EndIndex = (ep-1)*NumSegs+s;
-        EndLib(s,ep).EndIndex = EndIndex;       % Sometimes linear indices are useful for finding endpoints
-        EndLib(s,ep).Label = s;
-        Sub2End{Coords(1),Coords(2)} = [s ep];
-    end
-end
-
-IMS.SLabel = SLabel;
-IMS.EndLib = EndLib;
-
-
-%% Get Active Contour Fits of all segments
-
-IMS = fitAllSegments(IMS);
-% Now we will have IMS.fibSegs, which has the vectorized versions of each
-% segment
+[m,n] = size(ims.segsInit);
+pixdim = ims.nmPix;                         % size of a pixel in nm
+pixarea = pixdim^2;
 
 
 %% Make Search Kernels
 
 % First build the search kernel, which will look out from each endpoint of
 % a segment for other endpoints
-% It is 90 x 200 nm, a horizontal bar
 
 Kh = ceil(SearchLat/pixdim);                    % How far to search laterally (from the sides of the segment)
 Kw = ceil(SearchLong/pixdim);                   % How far to search longitudinally (out in the direction of the segment)
@@ -110,31 +52,31 @@ for j = 1:NumSegs
         % Keeping in mind that x = j and y = i
     
         if ep==1
-            SearchVec = IMS.fibSegs(j).xy(:,1) - IMS.fibSegs(j).xy(:,3);
+            SearchVec = ims.fibSegs(j).xy(:,1) - ims.fibSegs(j).xy(:,3);
             SearchVec = SearchVec./norm(SearchVec);
         else
-            SearchVec = IMS.fibSegs(j).xy(:,end) - IMS.fibSegs(j).xy(:,end-2);
+            SearchVec = ims.fibSegs(j).xy(:,end) - ims.fibSegs(j).xy(:,end-2);
             SearchVec = SearchVec./norm(SearchVec);
         end
         
         SearchAngle = ImVec2RealAng(SearchVec);             % i.e. a search vector of [1, -1] gives a real angle of +45 deg.
-        IMS.EndLib(j,ep).SearchVec = SearchVec;
-        IMS.EndLib(j,ep).SearchAngle = SearchAngle;
+        ims.EndLib(j,ep).SearchVec = SearchVec;
+        ims.EndLib(j,ep).SearchAngle = SearchAngle;
         
         %% Project Search Boxes to find Match Endpoints
         
         RotKern = imrotate(Kernel,SearchAngle);             % Rotate the kernels to that angle
         RotKStart = imrotate(KStart,SearchAngle);           % Rotate the kernel start point to that angle
         
-        EPMatch = KernSearch(EndsImg,RotKern,RotKStart,End2Sub{j,ep});
-        IMS.EndLib(j,ep).MatchSubs = EPMatch;               % This is the matrix of subscript indices of endpoints that match with this endpoint
+        EPMatch = KernSearch(ims.EndsImg,RotKern,RotKStart,ims.End2Sub{j,ep});
+        ims.EndLib(j,ep).MatchSubs = EPMatch;               % This is the matrix of subscript indices of endpoints that match with this endpoint
 
         if not(isempty(EPMatch))
-            IMS.EndLib(j,ep).MatchSegs = GetMatchSegs(IMS.EndLib(j,ep),SLabel);
-            IMS.EndLib(j,ep).MatchEnds = GetMatchEnds(EPMatch,Sub2End);
+            ims.EndLib(j,ep).MatchSegs = GetMatchSegs(ims.EndLib(j,ep),ims.SegLabels);
+            ims.EndLib(j,ep).MatchEnds = GetMatchEnds(EPMatch,ims.Sub2End);
         else
-            IMS.EndLib(j,ep).MatchSegs = [];
-            IMS.EndLib(j,ep).MatchEnds = [];
+            ims.EndLib(j,ep).MatchSegs = [];
+            ims.EndLib(j,ep).MatchEnds = [];
         end
     end
 end
@@ -142,6 +84,7 @@ end
 
 %% Ranking Matches
 
+% waitbar(0.7,hwait,'Scoring Matches...')
 disp('Ranking Results...')
 
 MatchMatrix1 = sparse(zeros(NumEnds));                       % EndIndex = (en-1)*NumEnds+j
@@ -152,22 +95,24 @@ MatchMatrix2 = sparse(zeros(NumEnds));
 % the other should be -1. Therefore, their product should be as close to -1
 % as possible.
 
-% There should also be a criteria for the minimum allowable angle between
-% either of these. Starting with 45 degrees ('ODiffTol')
-
-% MinScore = -0.5;    % cos(45)*cos(135) = -0.5
 
 for j = 1:NumSegs %1155:1155
 %     disp(j)
     for ep = 1:2
-        if not(isempty(IMS.EndLib(j,ep).MatchEnds))
+        if not(isempty(ims.EndLib(j,ep).MatchEnds))
             
-            ME_temp = IMS.EndLib(j,ep).MatchEnds;   % Too long to type
+            ME_temp = ims.EndLib(j,ep).MatchEnds;   % Too long to type
             MatchLinInds = (ME_temp(:,2)-1)*NumSegs+ME_temp(:,1);
             
-            IMS.EndLib(j,ep).coScores = getCoScores(IMS,j,ep);      % Get cosine scores for each match
-            IMS.EndLib(j,ep).MatchTable = ...
-                sortrows([IMS.EndLib(j,ep).MatchEnds, MatchLinInds, IMS.EndLib(j,ep).coScores],4);
+            ims.EndLib(j,ep).coScores = getCoScores(ims,j,ep,settings);      % Get cosine scores for each match
+            ims.EndLib(j,ep).MatchTable = ...
+                sortrows([ims.EndLib(j,ep).MatchEnds, MatchLinInds, ims.EndLib(j,ep).coScores],4);
+            
+            % Clear matches with scores over 1 (angle exceeded maxAngleDeg)
+            ims.EndLib(j,ep).MatchTable( ims.EndLib(j,ep).MatchTable(:,4) > 1,: ) = [];
+            if isempty(ims.EndLib(j,ep).MatchTable)
+                continue
+            end
             
             % MatchTable:
             % | SegNum, EPNum (1 or 2), EPLinearIndex, coScore (desc.) |
@@ -175,14 +120,14 @@ for j = 1:NumSegs %1155:1155
             % Enter relevant quantities in match matrices 1 and 2 (1st and
             % 2nd choices)
             
-            MatchMatrix1(IMS.EndLib(j,ep).EndIndex,IMS.EndLib(j,ep).MatchTable(1,3)) = 1;
-            if size(IMS.EndLib(j,ep).MatchTable,1)>1
-                MatchMatrix2(IMS.EndLib(j,ep).EndIndex,IMS.EndLib(j,ep).MatchTable(2,3)) = 1;
+            MatchMatrix1(ims.EndLib(j,ep).EndIndex,ims.EndLib(j,ep).MatchTable(1,3)) = 1;
+            if size(ims.EndLib(j,ep).MatchTable,1)>1
+                MatchMatrix2(ims.EndLib(j,ep).EndIndex,ims.EndLib(j,ep).MatchTable(2,3)) = 1;
             end
 
         else
-            IMS.EndLib(j,ep).coScores = [];
-            IMS.EndLib(j,ep).MatchTable = [];
+            ims.EndLib(j,ep).coScores = [];
+            ims.EndLib(j,ep).MatchTable = [];
         end
     end
 end
@@ -193,12 +138,37 @@ end
 % neither end is already in a 1-1 match. Finally, grant 2-2 matches if
 % neither is in a 1-1 or 1-2 match.
 
+% However, 1-2 matches are tricky because they are not mutually exclusive,
+% and can cause circular references. So we must rank the 1-2 matches by
+% their overall scores, and iteratively add them to the match matrix, while
+% excluding their members from being matched again.
+
+% waitbar(0.8,hwait,'Ranking Matches...')
+
 MM11 = MatchMatrix1.*MatchMatrix1';
 Unmatched11 = ~( repmat(sum(MM11,1),size(MM11,1),1) + repmat(sum(MM11,2),1,size(MM11,2)) );
-MM12 = MatchMatrix1.*MatchMatrix2' + MatchMatrix2.*MatchMatrix1';
+
+MM12_init = MatchMatrix1.*MatchMatrix2';
+MM12_init = MM12_init.*Unmatched11;
+[ii jj val] = find(MM12_init);
+MM12_subs=[ii, jj, val];
+MM12_subs(:,4) = arrayfun(@(mm) ims.EndLib(mm).MatchTable(1,4),MM12_subs(:,1));
+MM12_rank = sortrows(MM12_subs,4);
+MM12 = zeros(size(MM12_init));
+for mi = 1:size(MM12_rank,1)
+    mii = MM12_rank(mi,1); mij = MM12_rank(mi,2);
+    if MM12_init(mii,mij) == 1
+        MM12(mii,mij) = 1;
+        MM12_init(mii,:) = 0; MM12_init(:,mii) = 0;
+        MM12_init(mij,:) = 0; MM12_init(:,mij) = 0;
+    end
+end
+MM12 = MM12+MM12';
 Unmatched12 = ~( repmat(sum(MM12,1),size(MM12,1),1) + repmat(sum(MM12,2),1,size(MM12,2)) );
+
 MM22 = MatchMatrix2.*MatchMatrix2';
-MM_Final = MM11 + MM12.*Unmatched11 + MM22.*(Unmatched11 & Unmatched12); 
+MM22 = MM22.*(Unmatched11 & Unmatched12);
+MM_Final = MM11 + MM12 + MM22;
 
 
 %% Percolation
@@ -216,6 +186,7 @@ MM_Final = MM11 + MM12.*Unmatched11 + MM22.*(Unmatched11 & Unmatched12);
 % Make SegJump 1
 % Continue
 
+% waitbar(0.9,hwait,'Percolating Segments...')
 disp('Stitching Fibers...')
 
 DeadEnds = find(sum(MM_Final,2)==0);
@@ -224,11 +195,12 @@ count = 1;
 SegJump = 1;
 CurrEnd = DeadEnds(1);
 F(count).Fiber = [CurrEnd];
+% save('FLDebug')
 
 while not(isempty(DeadEnds))
     if SegJump
         SisterEnd = FindSister(CurrEnd,NumSegs);
-        F(count).Fiber = [F(count).Fiber SisterEnd];
+        F(count).Fiber = [F(count).Fiber, SisterEnd];
         SisterMatch = FindMatch(SisterEnd,MM_Final);
         if isempty(SisterMatch)
             DeadEnds = DeadEnds(2:end);
@@ -251,6 +223,8 @@ end
 
 
 %% Get Fiber Labels
+
+% waitbar(0.9,hwait,'Labeling Fibers...')
 disp('Labeling Fibers...')
 
 % A Fiber is a list of segment end indices.
@@ -264,7 +238,7 @@ for i = 1:length(F)
     FirstEnds = Fiberi(1:2:end);
     FiberSegs = [];
     for e = FirstEnds
-        FiberSegs = [FiberSegs IMS.EndLib(e).Label];
+        FiberSegs = [FiberSegs ims.EndLib(e).Label];
     end
     F(i).FiberSegs = FiberSegs;
 end
@@ -273,54 +247,12 @@ end
 FiberLabels = zeros(m,n);
 for i = 1:length(F)
     FiberSegsi = F(i).FiberSegs;
-    NewFiber = MultiEquiv(SLabel,FiberSegsi).*i;
+    NewFiber = MultiEquiv(ims.SegLabels,FiberSegsi).*i;
     FiberLabels = FiberLabels + NewFiber;
 end
 
-IMS.
-IMS.FiberLabels = FiberLabels;
-
-
-%% Active Contour Fit of Stitched Fibers
-
-IMS = fitAllFibers(IMS);
-
-
-%% Calculate Fiber Lengths
-disp('Calculating Fiber Lengths...')
-
-for i = 1:length(F)
-    
-    %New Formula
-    Fiberi = F(i).Fiber;
-    seg_indices = find(SLabel==F(i).FiberSegs(1));
-    TotalLen = sum(arrayfun(@(x) min(abs(1/cosd(IMS.AngMap(x))),abs(1/sind(IMS.AngMap(x)))),seg_indices));
-    % Converts list of pixel indices into a list of pixel chord lengths
-    
-    % If more segments, add the distance between the endpoints and the
-    % length of the next segment
-    if length(F(i).FiberSegs) > 1
-        for j = 2:length(F(i).FiberSegs)
-            TotalLen = TotalLen + norm( IMS.EndLib( F(i).Fiber(j*2-1) ).EPCoord - IMS.EndLib( F(i).Fiber(j*2-2) ).EPCoord ,2);
-            % Sraight line distance between end of segment j-1 and
-            % beginning of segment j
-            seg_indices = find(SLabel==F(i).FiberSegs(j));
-            TotalLen = TotalLen + ...
-                        sum(arrayfun(@(x) min(abs(1/cosd(IMS.AngMap(x))),abs(1/sind(IMS.AngMap(x)))),seg_indices));
-        end
-    end
-    F(i).Length = TotalLen*pixdim;
-end
-% 
-% save('FLDebug')
-
-% IMS.EndLib = EndLib;
-IMS.Fibers = F;
-IMS.SFib = SFib;
-IMS.SLabel = SLabel;
-IMS.FLD = [IMS.Fibers(:).Length];
-
-save('FLDebug')
+ims.Fibers = F;
+ims.FiberLabels = FiberLabels;
 
 end
 
@@ -355,32 +287,6 @@ for j = Matches(Matches~=prev)
     [Fadd,IncorpAdd] = FiberPerc(Fnew,IncorpNew,MatchMatrix,count,j,i);
     Fnew(count).Fiber = union(Fnew(count).Fiber,Fadd(count).Fiber);
     IncorpNew = union(IncorpNew,IncorpAdd);
-end
-
-end
-
-function Top = ScoreMatches(ELS)
-
-Cand = ELS.Candidates;
-OD = ELS.ODiffs;
-MD = ELS.MatchDists;
-[m n] = size(OD);
-MatchEnds = ELS.MatchEnds;
-Tops = [];
-count = 0;
-for e = 1:m
-    if Cand(e)
-        count = count+1;
-        Score = (OD(e)>30).*OD(e)+MD(e);
-        Tops(count,:) = [Score MatchEnds(e,:)];
-    end
-end
-
-if not(isempty(Tops))
-    Tops = sortrows(Tops,1);            % Rank from lowest to highest score
-    Top = Tops(1,:);
-else
-    Top = [];
 end
 
 end
@@ -426,7 +332,7 @@ Matches = [Matchi, Matchj];
 
 end
 
-function MatchSegs = GetMatchSegs(ELS,SLabel)
+function MatchSegs = GetMatchSegs(ELS,SegLabels)
 
 MatchSubs = ELS.MatchSubs;
 [m n] = size(MatchSubs);
@@ -434,7 +340,7 @@ MatchSubs = ELS.MatchSubs;
 MatchSegs = zeros(m,1);
 
 for i = 1:m
-    MatchSegs(i) = SLabel(MatchSubs(i,1),MatchSubs(i,2));
+    MatchSegs(i) = SegLabels(MatchSubs(i,1),MatchSubs(i,2));
 end
 
 end
@@ -452,7 +358,7 @@ end
 
 end
 
-function coScores = getCoScores(IMS,j,ep)
+function coScores = getCoScores(IMS,j,ep,settings)
 
 %% Cosine Scores
 % cosine( searchVec1 , connVec ) * cosine( searchVec2 , connVec )
@@ -468,7 +374,8 @@ for i = 1:m
     connVec = IMS.EndLib(mj,mep).EVCoord - IMS.EndLib(j,ep).EVCoord;        % connVec is in FiberApp xy space (x=j, y=i), same as search vecs
     searchVec_m = IMS.EndLib(mj,mep).SearchVec;
     coScores(i,1) = dot(searchVec1,connVec)/(norm(searchVec1)*norm(connVec)) *...
-                    dot(connVec,searchVec_m)/(norm(connVec)*norm(searchVec_m));
+                    dot(connVec,searchVec_m)/(norm(connVec)*norm(searchVec_m)) +...
+                    ( (dot(searchVec1,searchVec_m)/(norm(searchVec1)*norm(searchVec_m))) > cosd(180-settings.maxAngleDeg) )*1000;
 end
 
 end

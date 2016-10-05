@@ -3,6 +3,9 @@ function [S, MO, cent, n, Frames, Sfull, Smod, BETA] = getS2Dauto(img,settings)
 addpath('Functions')
 addpath('Functions/coherencefilter_version5b')
 
+% Make a dummy figure so the filter will be happy
+auto_handles = struct();
+
 % Initialize image data structure and pixelize (convert from nm to pix) setting values
 ims = initImgData(img); % initialize the image structure, which generates a grayscale and some simple thresholded stuff to start with
 [settings, ims] = pix_settings(settings,ims);
@@ -11,7 +14,10 @@ if settings.figSave
 end
 
 % Run the filter bank at the current settings
-ims = main_filter(ims,settings);
+auto_handles.ims = ims;
+auto_handles.settings = settings;
+auto_handles = main_filter(auto_handles);
+ims = auto_handles.ims;
 
 % Display the Angle Color Map for pixels that are in the skeleton
 % disp('Generating Figures...')

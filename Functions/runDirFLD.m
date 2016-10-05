@@ -7,6 +7,7 @@ imdir = CompileImgs(dirPath);
 % S = zeros(length(imdir),1);
 
 DataMat = [];
+auto_handles = struct();
 
 hwaitdir = waitbar(0,'Running Directory...');
 numIms = length(imdir);
@@ -26,7 +27,13 @@ for i = 1:numIms
     end
     
     % Run the filter bank at the current settings
-    ims = main_filter(ims,settings);
+    auto_handles.ims = ims;
+    auto_handles.settings = settings;
+    auto_handles = main_filter(auto_handles);
+    ims = auto_handles.ims;
+    
+    % Stitch fiber segments and calculate length
+    ims = StitchFibers2(ims,settings);
     ims = FiberLengths(ims,settings);
     
     % Sample fiber widths along each fiber

@@ -14,4 +14,9 @@ settings.Options.rho = settings.rhonm/ims.nmPix;
 settings.frameStep = ceil(settings.frameStepnmWide/ims.nmPix/2);
 settings.gridStep = ceil(settings.gridStepnm/ims.nmPix);
 
+% Match Search Settings
+settings.searchLat = 0.02 * ims.nmWid;
+settings.searchLong = 0.06 * ims.nmWid;
+
+
 end
