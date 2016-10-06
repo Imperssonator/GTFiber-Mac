@@ -2,7 +2,7 @@ function handles = FiberVecPlot_stitch(handles)
 
 % Given imageData filepath, plot the fibers.
 
-XY = {handles.ims.fibSegs(:).xy};
+XY = {handles.ims.Fibers(:).xy};
 w = size(handles.ims.img,2);
 h = size(handles.ims.img,1);
 

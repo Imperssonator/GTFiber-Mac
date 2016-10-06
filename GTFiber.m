@@ -685,10 +685,8 @@ function invertColor_Callback(hObject, eventdata, handles)
 
 switch get(handles.invertColor,'Value')
     case 1
-        figure;
         handles=imshowGT(imcomplement(handles.ims.gray),handles,'img_axes');
     case 0
-        figure;
         handles=imshowGT(handles.ims.gray,handles,'img_axes');
 end
 
