@@ -1,6 +1,8 @@
 # GTFiber-Mac
 This is the public-facing repository for the Mac OS version of GTFiber. GTFiber is an open source program for automated quantitative analysis of images of fibrillar microstructures.
 
+See [GTFiber for Windows](https://github.com/Imperssonator/GTFiber-Windows) for 64-bit Windows version (XP64, 7+).
+
 ## Running in MATLAB
 * [Download](https://github.com/Imperssonator/GTFiber-Mac/archive/master.zip) the repository to your local machine
 * Extract the repository to your MATLAB active directory
