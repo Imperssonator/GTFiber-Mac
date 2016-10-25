@@ -23,7 +23,7 @@ tail = (pcOld(end)-vectNum*step)/2;
 pcNew = linspace(tail, pcOld(end)-tail, vectNum+1);
 
 % Vectors indexes of the old curve, that contain points of the new curve 
-[~, bin] = histc(pcNew, pcOld);
+[~, ~, bin] = histcounts(pcNew, pcOld);
 bin(end) = bin(end-1);
 bin(bin == 0) = 1;
 

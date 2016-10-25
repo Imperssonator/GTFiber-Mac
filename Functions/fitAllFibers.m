@@ -46,17 +46,19 @@ IMS.Fibers(fibNum).sortPixInds = sortPixInds(:,1);
 IMS.Fibers(fibNum).sortPixSubs = ind2subv(size(IMS.SegLabels),sortPixInds(:,1));
 
 [gradX, gradY] = gradient2Dx2(IMS.gray);
+
+fiberStep = settings.fiberStep;  % Number of pixels a discrete step should take
     
 % Short names for fiber tracking parameters and data
 xy_col = IMS.Fibers(fibNum).sortPixSubs;    % column vector of i,j coords of pixels in order
 xy = flipud(xy_col') - 0.5;
+xy = distributePoints(xy,fiberStep);
 a = 0;
 b = 20;
 g = 20;
 k1 = 20;
 k2 = 10;
 fiberIntensity = 255;
-fiberStep = settings.fiberStep;  % Number of pixels a discrete step should take
 
 % Apply fitting algorithm FA.iterations times
 for k = 1:10
