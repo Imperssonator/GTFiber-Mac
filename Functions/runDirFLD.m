@@ -40,6 +40,8 @@ for i = 1:numIms
     ims = FiberWidths(ims,settings);
     FiberData = [[ims.Fibers(:).Length]', [ims.Fibers(:).Width]', [ims.Fibers(:).Length]'./[ims.Fibers(:).Width]'];
     DataMat = [DataMat; FiberData];
+    
+    save([ims.imNamePath, '_FiberData.mat'],'FiberData')
 
 end
 

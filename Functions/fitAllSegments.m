@@ -53,17 +53,19 @@ function ims = FitSegment(ims,settings,segNum)
 fibSegImg = ims.SegLabels==segNum;
 
 [gradX, gradY] = gradient2Dx2(fibSegImg);
-    
+
+fiberStep = settings.fiberStep;  % Number of pixels a discrete step should take
+
 % Short names for fiber tracking parameters and data
 xy_col = ims.fibSegs(segNum).sortPixSubs;    % column vector of i,j coords of pixels in order
 xy = flipud(xy_col') - 0.5;
+xy = distributePoints(xy,fiberStep);
 a = 0;
 b = 0;
 g = 20;
 k1 = 20;
 k2 = 10;
 fiberIntensity = 1;
-fiberStep = settings.fiberStep;  % Number of pixels a discrete step should take
 
 % Apply fitting algorithm FA.iterations times
 for k = 1:10
