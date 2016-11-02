@@ -1,16 +1,24 @@
-function xl = runDirFLD(dirPath,settings)
+function SummaryData = runDirFLD(dirPath,settings)
 
 % varargin{1} is: 0 if just get images, 1 if get mobilities
 
+hwaitdir = waitbar(0,'Running Directory...');
+
 imdir = CompileImgs(dirPath);
+numIms = length(imdir);
 
 % S = zeros(length(imdir),1);
 
-DataMat = [];
+AllFiberData = [];
+SummaryData = cell(numIms,6);
 auto_handles = struct();
 
-hwaitdir = waitbar(0,'Running Directory...');
-numIms = length(imdir);
+SummaryData{1,1} = 'Image Name';
+SummaryData{1,2} = 'Sfull fit';
+SummaryData{1,3} = 'Correlation Length (nm)';
+SummaryData{1,4} = 'Mean Length';
+SummaryData{1,5} = 'Mean Width';
+SummaryData{1,6} = 'Length Density';
 
 for i = 1:numIms
     waitbar(i/numIms,hwaitdir,['Processing ', imdir(i).name]);
@@ -39,13 +47,22 @@ for i = 1:numIms
     % Sample fiber widths along each fiber
     ims = FiberWidths(ims,settings);
     FiberData = [[ims.Fibers(:).Length]', [ims.Fibers(:).Width]', [ims.Fibers(:).Length]'./[ims.Fibers(:).Width]'];
-    DataMat = [DataMat; FiberData];
+    AllFiberData = [AllFiberData; FiberData];
+    
+    SummaryData{i+1,1} = ims.imName;
+    [Frames, Sfull, Smod, BETA] = op2d_am(ims, settings);
+    SummaryData{i+1,2} = BETA(1);
+    SummaryData{i+1,3} = BETA(2)*1000;
+    SummaryData{i+1,4} = mean(FiberData(:,1));
+    SummaryData{i+1,5} = mean(FiberData(:,2));
+    SummaryData{i+1,6} = sum(FiberData(:,1)) / (size(ims.img,1)*size(ims.img,2)*(ims.nmPix)^2);
     
     save([ims.imNamePath, '_FiberData.mat'],'FiberData')
 
 end
 
-csvwrite([dirPath, 'fiber_data.csv'],DataMat);
+csvwrite([dirPath, 'all_fiber_data.csv'],AllFiberData);
+cell2csv([dirPath, 'summary_stats.csv'], SummaryData, ',', 1999, '.');
 
 close(hwaitdir)
 
