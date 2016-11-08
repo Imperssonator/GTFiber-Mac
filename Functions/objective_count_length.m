@@ -25,6 +25,9 @@ settings.fullOP = 1;
 
 auto_handles.ims = ims;
 auto_handles.settings = settings;
+f = figure;
+auto_handles.img_axes = axes();
+
 auto_handles = main_filter(auto_handles);
 ims = auto_handles.ims;
 
@@ -34,10 +37,12 @@ FiberData = [ims.Fibers(:).Length]';
 count_length = [length(FiberData),mean(FiberData)];
 out = norm(count_length-target);
 
+close(f)
+
 end
 
 
-function settings = get_settings_nogui(Params,nmWid);
+function settings = get_settings_nogui(Params,nmWid)
 
 % Get dimensions
 settings.nmWid = nmWid; %str2num(get(handles.nmWid,'String'));
