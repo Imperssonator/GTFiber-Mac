@@ -60,6 +60,7 @@ if settings.figSwitch
 end
 if settings.figSave
     imwrite(AngIm,[ims.figSavePath, '_AM', '.tif']);
+    imwrite(ims.CEDclean,[ims.figSavePath, '_BW', '.tif']);
 end
 
 [n, cent, S, MO] = ODistInt(AngMapNaN,5,1,ims,settings);
