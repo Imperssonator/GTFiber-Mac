@@ -31,7 +31,7 @@ for i = 1:length(ims.Fibers)
         fibWidSamps(samp) = WidthSample(bw,angMap,coord);
     end
     
-    ims.Fibers(i).Width = mean(fibWidSamps)*nmPix;
+    ims.Fibers(i).Width = nanmean(fibWidSamps)*nmPix;
 end
 
 ims.FWD = [ims.Fibers(:).Width];
@@ -127,6 +127,10 @@ for t = 1:length(Tsort)
     end
 end
 
-out = w_pos+w_neg;
+if exist('w_pos','var') && exist('w_neg','var')
+    out = w_pos+w_neg;
+else
+    out=NaN;
+end
 
 end
