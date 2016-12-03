@@ -49,3 +49,8 @@ GTFiber comes with example images from the protocol paper in which it was introd
 * Click "Run Filter", wait for processing to complete
 * Click "Orientation Map"
 * Click "OP 2D"
+
+### Coming Soon - Fiber Reconstruction for Length and Width Distributions
+These new features are in beta but are included with the latest release of GTFiber. Below is a screenshot of some of the results that can be produced in v2.0, as well as the user interface updates. In the upper right, the color indicates the fiber membership of pixels, not anything related to orientation as with the Orientation Map.
+
+![UI](http://i.imgur.com/I2voEKW.png)
