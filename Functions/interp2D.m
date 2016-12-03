@@ -60,13 +60,13 @@ switch method
         
     case 'cubic'
         % Check for out of range values of xi and set to 1
-        xout = find(xi < 2 | xi > ncols-1);
+        xout = find(xi < 2 | xi > ncols-2);
         if ~isempty(xout)
             xi(xout) = 2;
         end
         
         % Check for out of range values of yi and set to 1
-        yout = find(yi < 2 | yi > nrows-1);
+        yout = find(yi < 2 | yi > nrows-2);
         if ~isempty(yout)
             yi(yout) = 2;
         end
