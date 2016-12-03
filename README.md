@@ -1,5 +1,9 @@
 # GTFiber-Mac
-This is the public-facing repository for the Mac OS version of GTFiber. GTFiber is an open source program for automated quantitative analysis of images of fibrillar microstructures.
+This is the public-facing repository for the Mac OS version of GTFiber. GTFiber is an open source program for automated quantitative analysis of images of fibrillar microstructures, detailed in [Chemistry of Materials](http://pubs.acs.org/doi/abs/10.1021/acs.chemmater.6b01825). See the below examples of its application to MicroCT, SEM, and TEM - although its development was focused on AFM images of semiconducting nanofibers.
+
+![Imgur](http://i.imgur.com/skufC9e.png?1)
+
+See [GTFiber for Windows](https://github.com/Imperssonator/GTFiber-Windows) for 64-bit Windows version (XP64, 7+).
 
 ## Running in MATLAB
 * [Download](https://github.com/Imperssonator/GTFiber-Mac/archive/master.zip) the repository to your local machine
@@ -45,3 +49,8 @@ GTFiber comes with example images from the protocol paper in which it was introd
 * Click "Run Filter", wait for processing to complete
 * Click "Orientation Map"
 * Click "OP 2D"
+
+### Coming Soon - Fiber Reconstruction for Length and Width Distributions
+These new features are in beta but are included with the latest release of GTFiber. Below is a screenshot of some of the results that can be produced in v2.0, as well as the user interface updates. In the upper right, the color indicates the fiber membership of pixels, not anything related to orientation as with the Orientation Map.
+
+![UI](http://i.imgur.com/I2voEKW.png)
