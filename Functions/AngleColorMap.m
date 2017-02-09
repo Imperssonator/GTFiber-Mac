@@ -17,7 +17,11 @@ for i = 1:m
     end
 end
 
-amf = figure; imshow(AngIm)
+AngImDiskFilt = imfilter(AngIm,fspecial('disk',2),'replicate');
+AngImHSV = rgb2hsv(AngImDiskFilt);
+AngImHSV(:,:,3) = ones(size(AngImHSV,1),size(AngImHSV,2)).*AngImHSV(:,:,3)>0.1;
+
+amf = figure; imtool(imgaussian(hsv2rgb(AngImHSV),0.7));
 ampos = amf.Position;
 legpos = [ampos(1)+ampos(3), ampos(2)];
 Angle_Legend(legpos);

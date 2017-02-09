@@ -55,6 +55,12 @@ for i = 1:m
     end
 end
 
+AngImDiskFilt = imfilter(AngIm,fspecial('disk',2),'replicate');
+AngImHSV = rgb2hsv(AngImDiskFilt);
+AngImHSV(:,:,3) = ones(size(AngImHSV,1),size(AngImHSV,2)).*AngImHSV(:,:,3)>0.1;
+
+AngIm = imgaussian(hsv2rgb(AngImHSV),0.7);
+
 if settings.figSwitch
     figure; imshow(AngIm)
 end

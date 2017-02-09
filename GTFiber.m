@@ -236,6 +236,11 @@ figure;
 histogram(handles.ims.FWD,50);
 title('Fiber Width Distribution');
 
+disp('Mean Length')
+disp(mean(handles.ims.FLD))
+disp('Fiber Length Density')
+disp(sum(handles.ims.FLD)/(handles.ims.nmWid)^2)
+
 % Compile All Data, including Aspect Ratio
 FiberData = [[handles.ims.Fibers(:).Length]',...
              [handles.ims.Fibers(:).Width]',...
