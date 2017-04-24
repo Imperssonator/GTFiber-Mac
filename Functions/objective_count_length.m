@@ -30,7 +30,8 @@ settings.fullOP = 1;
 
 auto_handles.ims = ims;
 auto_handles.settings = settings;
-f=figure;
+
+f = figure;
 auto_handles.img_axes = axes();
 
 auto_handles = main_filter(auto_handles);
@@ -41,8 +42,11 @@ ims = FiberLengths(ims,settings);
 FiberData = [ims.Fibers(:).Length]';
 count_length = [length(FiberData),mean(FiberData)];
 out = norm(count_length-target);
+
 Fibers = ims.Fibers;
+
 close(f)
+
 end
 
 

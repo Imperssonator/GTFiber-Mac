@@ -35,10 +35,10 @@ switch settings.threshMethod
 end
 handles=imshowGT(ims.CEDbw,handles,'img_axes');
 ims.CEDclean = bwareaopen(ims.CEDbw,settings.noisepix);
-ims.cleanRP = regionprops(ims.CEDclean,'Solidity','Eccentricity');
-not_particles = ~([ims.cleanRP(:).Eccentricity]<0.95 & [ims.cleanRP(:).Solidity]>0.8);
-temp_label = bwlabel(ims.CEDclean);
-ims.CEDclean = MultiEquiv(temp_label,find(not_particles));
+% ims.cleanRP = regionprops(ims.CEDclean,'Solidity','Eccentricity');
+% not_particles = ~([ims.cleanRP(:).Eccentricity]<0.95 & [ims.cleanRP(:).Solidity]>0.8);
+% temp_label = bwlabel(ims.CEDclean);
+% ims.CEDclean = MultiEquiv(temp_label,find(not_particles));
 handles=imshowGT(ims.CEDclean,handles,'img_axes');
 
 
