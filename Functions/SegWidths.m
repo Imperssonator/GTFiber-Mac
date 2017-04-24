@@ -33,7 +33,7 @@ for i = 1:length(ims.fibSegs)
         fibWidSamps(samp) = WidthSample(bw,angMap,coord);
     end
     
-    ims.fibSegs(i).width = mean(fibWidSamps)*nmPix;
+    ims.fibSegs(i).width = nanmean(fibWidSamps)*nmPix;
 end
 
 end
@@ -126,6 +126,10 @@ for t = 1:length(Tsort)
     end
 end
 
-out = w_pos+w_neg;
+if exist('w_pos','var') && exist('w_neg','var')
+    out = w_pos+w_neg;
+else
+    out=NaN;
+end
 
 end

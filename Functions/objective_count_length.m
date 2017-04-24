@@ -1,4 +1,4 @@
-function out = objective_count_length(Params,imFile,nmWid,target)
+function [out, Fibers] = objective_count_length(Params,imFile,nmWid,target)
 
 % Okeeeee dokeeeeeeee
 % Params:                               LB      |      UB     
@@ -15,16 +15,24 @@ function out = objective_count_length(Params,imFile,nmWid,target)
 % 9. Max Width (nm)                        50      |      Inf
 % 10. Max Bend Angle (deg.)                 0       |      180
 % 11. Step Length (pix)                     1       |      10
+% 12. Search Lat (% im. Wid.)               0.01    |      0.1
+% 13. Search Long (% im. Wid.)              0.01    |      0.2
+
+addpath('Functions')
+addpath('Functions\coherencefilter_version5b')
 
 ims = initImgData(imFile);
 settings = get_settings_nogui(Params,nmWid);
 settings.figSwitch = 0;
 settings.figSave = 0;
 settings.fullOP = 1;
-[settings, ims] = pix_settings(settings,ims);
+[settings, ims] = pix_settings_nogui(settings,ims,Params);
 
 auto_handles.ims = ims;
 auto_handles.settings = settings;
+f=figure;
+auto_handles.img_axes = axes();
+
 auto_handles = main_filter(auto_handles);
 ims = auto_handles.ims;
 
@@ -33,11 +41,12 @@ ims = FiberLengths(ims,settings);
 FiberData = [ims.Fibers(:).Length]';
 count_length = [length(FiberData),mean(FiberData)];
 out = norm(count_length-target);
-
+Fibers = ims.Fibers;
+close(f)
 end
 
 
-function settings = get_settings_nogui(Params,nmWid);
+function settings = get_settings_nogui(Params,nmWid)
 
 % Get dimensions
 settings.nmWid = nmWid; %str2num(get(handles.nmWid,'String'));
@@ -92,5 +101,28 @@ settings.CEDFinalDelay = 0.8;
 settings.skelDelay = 4;
 settings.plotDelay = 0.5;
 settings.plotFinal = 3;
+
+end
+
+function [settings, ims] = pix_settings_nogui(settings,ims,Params)
+
+ims.nmWid = settings.nmWid;
+ims.pixWid = size(ims.img,2);
+ims.nmPix = ims.nmWid/ims.pixWid;
+
+% Get pixel values for filter options
+settings.thpix = ceil(settings.thnm/ims.nmPix);
+settings.noisepix = ceil(settings.noisenm/ims.nmPix^2);
+settings.maxBranchSize = ceil(settings.maxBranchSizenm/ims.nmPix);
+% settings.maxStubLen = ceil(settings.maxStubLennm/ims.nmPix);
+settings.Options.sigma = settings.gaussnm/ims.nmPix;
+settings.Options.rho = settings.rhonm/ims.nmPix;
+settings.frameStep = ceil(settings.frameStepnmWide/ims.nmPix/2);
+settings.gridStep = ceil(settings.gridStepnm/ims.nmPix);
+
+% Match Search Settings
+settings.searchLat = Params(12) * ims.nmWid;
+settings.searchLong = Params(13) * ims.nmWid;
+
 
 end
