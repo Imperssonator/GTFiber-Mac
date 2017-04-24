@@ -62,9 +62,7 @@ function GTFiber_OpeningFcn(hObject, eventdata, handles, varargin)
 
 % Choose default command line output for GTFiber
 handles.output = hObject;
-addpath('Functions')
-addpath('Functions/coherencefilter_version5b')
-addpath('Functions/cell2csv')
+addpath(genpath(pwd))
 
 % Update handles structure
 guidata(hObject, handles);
@@ -246,6 +244,8 @@ FiberData = [[handles.ims.Fibers(:).Length]',...
              [handles.ims.Fibers(:).Width]',...
              [handles.ims.Fibers(:).Length]'./[handles.ims.Fibers(:).Width]'];
 save([handles.ims.imName, '_FiberData'],'FiberData')
+
+% FiberVec_ACM(handles);
 
 guidata(hObject, handles);
 
@@ -516,15 +516,15 @@ function nmWid_Callback(hObject, eventdata, handles)
 %        str2double(get(hObject,'String')) returns contents of nmWid as a double
 
 nmWid = str2num(get(handles.nmWid,'String'));
-if ~isempty(nmWid)
-    set(handles.gauss,'String',num2str(nmWid*10/5000));
-    set(handles.rho,'String',num2str(nmWid*30/5000));
-    set(handles.tophatSize,'String',num2str(nmWid*30/5000));
-    set(handles.noiseArea,'String',num2str(nmWid^2*1500/5000^2));
-    set(handles.maxBranchSize,'String',num2str(nmWid*80/5000));
-    set(handles.frameStep,'String',num2str(nmWid*200/5000));
-    set(handles.gridStep,'String',num2str(nmWid*400/5000));
-end
+% if ~isempty(nmWid)
+%     set(handles.gauss,'String',num2str(nmWid*10/5000));
+%     set(handles.rho,'String',num2str(nmWid*30/5000));
+%     set(handles.tophatSize,'String',num2str(nmWid*30/5000));
+%     set(handles.noiseArea,'String',num2str(nmWid^2*1500/5000^2));
+%     set(handles.maxBranchSize,'String',num2str(nmWid*80/5000));
+%     set(handles.frameStep,'String',num2str(nmWid*200/5000));
+%     set(handles.gridStep,'String',num2str(nmWid*400/5000));
+% end
 
 guidata(hObject, handles);
 

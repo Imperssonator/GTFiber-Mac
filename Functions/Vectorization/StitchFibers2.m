@@ -39,7 +39,8 @@ ims = SegMatch(ims,settings);
 waitbar(0.8,hwait,'Vectorizing Final Fibers...');
 ims = fitAllFibers(ims,settings);
 
-% save('sf2debug','ims')
+
+save('sf2debug_2','ims')
 close(hwait)
 
 end

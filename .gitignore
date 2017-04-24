@@ -2,3 +2,4 @@
 *.CSV
 *.mat
 **/*.mat
+*_FiberData

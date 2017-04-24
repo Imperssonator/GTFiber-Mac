@@ -9,6 +9,7 @@ vectLen = sqrt(sum(vect.^2));
 
 % Parametric coordinates of points along the old curve
 pcOld = [0 cumsum(vectLen)];
+% disp(pcOld')
 
 % Number of vectors (segments) in a new curve
 vectNum = round(pcOld(end)/step);
@@ -21,6 +22,7 @@ tail = (pcOld(end)-vectNum*step)/2;
 
 % Parametric coordinates of new points along the old curve
 pcNew = linspace(tail, pcOld(end)-tail, vectNum+1);
+% disp(pcNew')
 
 % Vectors indexes of the old curve, that contain points of the new curve 
 [~, ~, bin] = histcounts(pcNew, pcOld);

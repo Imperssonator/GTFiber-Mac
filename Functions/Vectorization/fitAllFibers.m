@@ -95,7 +95,7 @@ for k = 1:10
     % much memory for big AFM images)
     % gradX and gradY are doubled! (see gradient2Dx2)
     vfx = interp2D(gradX, xy(1,:), xy(2,:), 'cubic')/2;
-    vfy = interp2D(gradY, xy(1,:), xy(2,:), 'cubic')/2;
+    vfy = interp2D(gradY, xy(1,:), xy(2,:), 'cubic')/2;   
     vf = k1*[vfx; vfy]/fiberIntensity;
     
     % Normalized vectors of fiber ends
