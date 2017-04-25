@@ -1,22 +1,23 @@
-function [settings, ims] = pix_settings(settings,ims)
+function ims = pix_settings(ims)
 
-ims.nmWid = settings.nmWid;
+ims.nmWid = ims.settings.nmWid;
 ims.pixWid = size(ims.img,2);
 ims.nmPix = ims.nmWid/ims.pixWid;
 
 % Get pixel values for filter options
-settings.thpix = ceil(settings.thnm/ims.nmPix);
-settings.noisepix = ceil(settings.noisenm/ims.nmPix^2);
-settings.maxBranchSize = ceil(settings.maxBranchSizenm/ims.nmPix);
-% settings.maxStubLen = ceil(settings.maxStubLennm/ims.nmPix);
-settings.Options.sigma = settings.gaussnm/ims.nmPix;
-settings.Options.rho = settings.rhonm/ims.nmPix;
-settings.frameStep = ceil(settings.frameStepnmWide/ims.nmPix/2);
-settings.gridStep = ceil(settings.gridStepnm/ims.nmPix);
+ims.settings.thpix = ceil(ims.settings.thnm/ims.nmPix);
+ims.settings.noisepix = ceil(ims.settings.noisenm/ims.nmPix^2);
+ims.settings.maxBranchSize = ceil(ims.settings.maxBranchSizenm/ims.nmPix);
+% ims.settings.maxStubLen = ceil(ims.settings.maxStubLennm/ims.nmPix);
+ims.settings.Options.sigma = ims.settings.gaussnm/ims.nmPix;
+ims.settings.Options.rho = ims.settings.rhonm/ims.nmPix;
+% ims.settings.frameStep = ceil(ims.settings.frameStepnmWide/ims.nmPix/2);
+% ims.settings.gridStep = ceil(ims.settings.gridStepnm/ims.nmPix);
 
-% Match Search Settings
-settings.searchLat = 0.02 * ims.nmWid;
-settings.searchLong = 0.04 * ims.nmWid;
+% Match Search settings
+ims.settings.fiberStep_nm = ims.settings.fiberStep * ims.nmPix;
+ims.settings.searchLat = 0.02 * ims.nmWid;
+ims.settings.searchLong = 0.04 * ims.nmWid;
 
 
 end

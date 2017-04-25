@@ -1,6 +1,6 @@
 function handles = main_filter(handles)
 
-settings = handles.settings;
+settings = handles.ims.settings;
 ims = handles.ims;
 
 % Run coherence filter
@@ -46,7 +46,7 @@ handles=imshowGT(ims.CEDclean,handles,'img_axes');
 waitbar(0.8,hwait,'Skeletonization...');
 ims.skel = bwmorph(ims.CEDclean,'skel',Inf);
 handles=imshowGT(ims.skel,handles,'img_axes');
-ims = CleanSkeleton(ims,settings);
+ims = CleanSkeleton(ims);
 handles=imshowGT(ims.skelTrim,handles,'img_axes');
 
 

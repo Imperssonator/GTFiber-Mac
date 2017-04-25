@@ -36,7 +36,7 @@ for f = 1:length(ims.Fibers)
     
     for seg = 1:(size(ims.Fibers(f).xy,2)-1)
         
-        xy_nm = ims.Fibers(f).xy .* ims.nmPix;
+        xy_nm = ims.Fibers(f).xy_nm % .* ims.nmPix;
         
         pt1 = xy_nm(:,seg);
         pt2 = xy_nm(:,seg+1);

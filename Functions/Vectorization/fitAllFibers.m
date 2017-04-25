@@ -1,56 +1,57 @@
-function IMS = fitAllFibers(IMS,settings)
+function ims = fitAllFibers(ims)
 
-numFibs = max(max(IMS.FiberLabels));
+numFibs = max(max(ims.FiberLabels));
 
 % The first goal here is to take individual segments and turn them into a
 % list of pixels where the list increases by distance from one end of the
 % segment, which is quantified by the bwdistgeodesic function
 
-for i = 1:numFibs
+for f = 1:numFibs
 %     disp(i)
-    IMS = FitFiber(IMS,settings,i);
-%     high_curve = [high_curve; sorted_seg(IMS.fibSegs(i).curv>1e-03,1)];
+    ims = FitFiber(ims,f);
+    ims.Fibers(f).xy_nm = ims.Fibers(f).xy .* ims.nmPix;
+%     high_curve = [high_curve; sorted_seg(ims.fibSegs(i).curv>1e-03,1)];
 end
 
-% high_curve_im = zeros(size(IMS.SegLabels));
+% high_curve_im = zeros(size(ims.SegLabels));
 % high_curve_im(high_curve) = 1;
 % imtool(high_curve_im)
 
 end
 
-function IMS = FitFiber(IMS,settings,fibNum)
+function ims = FitFiber(ims,fibNum)
 
 % Basically taking the active contours algorithm from FiberApp and giving it
 % an extremely good initial guess - just a list of the pixels that are the
 % backbone of a fiber segment and an image that is the binary ground truth
 % of the fiber segment
 
-FiberSegs = IMS.Fibers(fibNum).FiberSegs;                   % Labels of segments in fiber
+FiberSegs = ims.Fibers(fibNum).FiberSegs;                   % Labels of segments in fiber
 numFibSegs = length(FiberSegs);
-StartInds = IMS.Fibers(fibNum).Fiber(1:2:end);              % Indices of the first endpoint of each segment in the chain
-fibImg = IMS.FiberLabels==fibNum;
+StartInds = ims.Fibers(fibNum).Fiber(1:2:end);              % Indices of the first endpoint of each segment in the chain
+fibImg = ims.FiberLabels==fibNum;
 sortPixInds = [];
 
 for i = 1:numFibSegs
-    coord = IMS.EndLib(StartInds(i)).EPCoord;                       % Get grid coordinates of starting endpoint
-    end_ind = sub2ind(size(IMS.SegLabels),coord(1),coord(2));       % Get grid linear index of starting endpoint
-    dd = bwdistgeodesic(IMS.SegLabels==FiberSegs(i),end_ind);       % Get geodesic distances of segment pixels from selected endpoint
-    seg_inds = find(IMS.SegLabels==FiberSegs(i));                   % Get linear indices of pixels in this segment
+    coord = ims.EndLib(StartInds(i)).EPCoord;                       % Get grid coordinates of starting endpoint
+    end_ind = sub2ind(size(ims.SegLabels),coord(1),coord(2));       % Get grid linear index of starting endpoint
+    dd = bwdistgeodesic(ims.SegLabels==FiberSegs(i),end_ind);       % Get geodesic distances of segment pixels from selected endpoint
+    seg_inds = find(ims.SegLabels==FiberSegs(i));                   % Get linear indices of pixels in this segment
     vals = dd(seg_inds);                                            % Get the values of these pixels' geo. distances
     seg_list = [seg_inds, vals];                                    % Make a table
     sorted_seg = sortrows(seg_list,2);                              % Sort it
     sortPixInds = [sortPixInds; sorted_seg(:,1)];                   % Add it to the existing list
 end
 
-IMS.Fibers(fibNum).sortPixInds = sortPixInds(:,1);
-IMS.Fibers(fibNum).sortPixSubs = ind2subv(size(IMS.SegLabels),sortPixInds(:,1));
+ims.Fibers(fibNum).sortPixInds = sortPixInds(:,1);
+ims.Fibers(fibNum).sortPixSubs = ind2subv(size(ims.SegLabels),sortPixInds(:,1));
 
-[gradX, gradY] = gradient2Dx2(IMS.gray);
+[gradX, gradY] = gradient2Dx2(ims.gray);
 
-fiberStep = settings.fiberStep;  % Number of pixels a discrete step should take
+fiberStep = ims.settings.fiberStep;  % Number of pixels a discrete step should take
     
 % Short names for fiber tracking parameters and data
-xy_col = IMS.Fibers(fibNum).sortPixSubs;    % column vector of i,j coords of pixels in order
+xy_col = ims.Fibers(fibNum).sortPixSubs;    % column vector of i,j coords of pixels in order
 xy = flipud(xy_col') - 0.5;
 xy = distributePoints(xy,fiberStep);
 a = 0;
@@ -127,8 +128,8 @@ else
 end
 
 % Save fiber data
-IMS.Fibers(fibNum).angs = angs;
-IMS.Fibers(fibNum).xy = xy;
+ims.Fibers(fibNum).angs = angs;
+ims.Fibers(fibNum).xy = xy;
 
 end
 

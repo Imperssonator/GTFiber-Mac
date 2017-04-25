@@ -1,4 +1,4 @@
-function ims = BuildEndLib(ims,settings)
+function ims = BuildEndLib(ims)
 
 % Label Segments
 SegLabels = bwlabel(ims.segsInit,8);                % Create an image where their labels correspond to the order regionprops found them in

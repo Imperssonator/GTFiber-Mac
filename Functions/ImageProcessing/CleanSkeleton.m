@@ -1,4 +1,4 @@
-function ims = CleanSkeleton(ims,settings)
+function ims = CleanSkeleton(ims)
 
 % Starting from the initial skeleton, remove branches, groom, and clean it
 % until it consists only of unbranched, isolated segments.
@@ -7,7 +7,7 @@ function ims = CleanSkeleton(ims,settings)
 skelClose = bwmorph(imclose(ims.skel,strel('disk',1)),'skeleton',Inf);
 
 % FRemove branches up to a certain size
-ims.skelTrim = RemoveBranches(skelClose,settings.maxBranchSize);
+ims.skelTrim = RemoveBranches(skelClose,ims.settings.maxBranchSize);
 
 % Find branch points, dilate them, remove the dilated points to separate
 % all segments
@@ -16,7 +16,7 @@ bigBranchPts = imdilate(branchPts,ones(3));
 skelNoBranch = ims.skelTrim&~bigBranchPts;
 
 % Remove segments that are shorter than the max branch size
-ims.segsInit = bwareaopen(skelNoBranch,settings.maxBranchSize,8);
+ims.segsInit = bwareaopen(skelNoBranch,ims.settings.maxBranchSize,8);
 
 % Some segments may still have holes, this removes them.
 % It may no longer be necessary.

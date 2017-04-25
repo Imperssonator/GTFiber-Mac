@@ -1,12 +1,12 @@
-function handles = FiberVec_ACM(handles)
+function ims = FiberVec_ACM(ims)
 
 % Plot the vectorized fibers, except with each individual segment colored
 % by its orientation. This is probably the ideal visualization for the
 % Orientation Map, but it's incredibly slow.
 
-XY = {handles.ims.Fibers(:).xy};
-w = size(handles.ims.img,2);
-h = size(handles.ims.img,1);
+XY = {ims.Fibers(:).xy};
+w = size(ims.img,2);
+h = size(ims.img,1);
 sat = 0.92;
 
 f1 = figure('Visible','on');
@@ -26,6 +26,7 @@ XYi = XY{i};
             ang_ij = ang_ij+180;
         end
         plot(ha,xy_ij(1,:),xy_ij(2,:),'Color',hsv2rgb(2*ang_ij/360,1,sat),'LineWidth',4)
+    end
 end
 % axis equal
 set(ha,'Ydir','reverse')
@@ -41,7 +42,6 @@ F = getframe(f1);
 Fim = F.cdata;
 Fres = imresize(Fim,[h, w]);
 % 
-% handles = imshowGT(Fres,handles,'fiber_axes');
 % close(f1)
 
 end

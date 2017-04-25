@@ -31,8 +31,8 @@ settings.Options = Options;
 
 
 % OP2D calculation settings
-settings.gridStepnm = str2num(get(handles.gridStep,'String'));
-settings.frameStepnmWide = str2num(get(handles.frameStep,'String'));
+% settings.gridStepnm = str2num(get(handles.gridStep,'String'));
+% settings.frameStepnmWide = str2num(get(handles.frameStep,'String'));
 
 % Fiber Width calc settings
 % settings.fibWidSamps = str2num(get(handles.fibWidSamps,'String'));

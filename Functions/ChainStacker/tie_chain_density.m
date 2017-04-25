@@ -3,10 +3,29 @@ function ims = tie_chain_density(ims)
 % Get tie chain length density for a structure in which chains have been
 % populated
 
+% Hard coded:
+% edge_buffer: fraction of image width used as buffer zone to exclude
+% calculation of tie chain density for fibers subject to edge effects
+edge_buffer=0.05;
+
 for f = 1:length(ims.Fibers)
     
     disp(f)
+    
+    % Do some pre-processing stuff that probably should've been done
+    % earlier
     xy_nm = ims.Fibers(f).xy .* ims.nmPix;
+    ims.Fibers(f).xy_nm = xy_nm;
+    ims.Fibers(f).length_nm = sum(sqrt(sum(diff(ims.Fibers(f).xy_nm,1,2).^2,1)));
+    
+    % Check if any part of fiber lies within edge buffer
+    if any(xy_nm(:)<(edge_buffer*ims.nmWid)) ||...
+            any(xy_nm(:)>((1-edge_buffer)*ims.nmWid))
+        disp('too close to edge')
+        ims.Fibers(f).xing_pts=[];
+        ims.Fibers(f).tieChainDensity=[];
+        continue
+    end
     
     % Get 'bounding box' coordinates of each fiber to expedite chain
     % screening
@@ -33,10 +52,12 @@ for f = 1:length(ims.Fibers)
         end
     end
     
-    ims.Fibers(f).xy_nm = xy_nm;
     ims.Fibers(f).xing_pts = xing_pts;
-    ims.Fibers(f).length_nm = sum(sqrt(sum(diff(ims.Fibers(f).xy_nm,1,2).^2,1)));
     ims.Fibers(f).tieChainDensity = size(ims.Fibers(f).xing_pts,1)/ims.Fibers(f).length_nm;
 end
+
+% Compile and store tie chain density distribution as field in ims
+in_bounds=arrayfun(@(x) ~isempty(x.tieChainDensity),ims.Fibers);
+ims.tc_dist=[ims.Fibers(in_bounds).tieChainDensity]';
     
 end

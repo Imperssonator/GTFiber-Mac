@@ -1,12 +1,12 @@
-function ims = SegWidths(ims,settings)
+function ims = SegWidths(ims)
 
-numSamps = settings.fibWidSamps2;
+numSamps = ims.settings.fibWidSamps2;
 
 % ORIGIN IS (0,0) AT TOP LEFT CORNER for both pixel and nm space
 % X INCREASES DOWN
 % Y INCREASES RIGHT
 
-% numSamps = min(settings.fibWidSamps,sum(sum(ims.skelTrim)));
+% numSamps = min(ims.settings.fibWidSamps,sum(sum(ims.skelTrim)));
 angMap = ims.AngMap;
 nmPix = ims.nmPix;
 bw = ims.CEDclean;  % Thresholded black and white image

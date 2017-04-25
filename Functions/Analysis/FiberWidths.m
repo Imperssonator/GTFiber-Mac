@@ -1,12 +1,12 @@
-function ims = FiberWidths(ims,settings)
+function ims = FiberWidths(ims,figSwitch)
 
-numSamps = settings.fibWidSamps2;
+numSamps = ims.settings.fibWidSamps2;
 
 % ORIGIN IS (0,0) AT TOP LEFT CORNER for both pixel and nm space
 % X INCREASES DOWN
 % Y INCREASES RIGHT
 
-% numSamps = min(settings.fibWidSamps,sum(sum(ims.skelTrim)));
+% numSamps = min(ims.settings.fibWidSamps,sum(sum(ims.skelTrim)));
 angMap = ims.AngMap;
 skel = ims.skelTrim;
 nmPix = ims.nmPix;
@@ -35,6 +35,16 @@ for i = 1:length(ims.Fibers)
 end
 
 ims.FWD = [ims.Fibers(:).Width];
+
+if figSwitch
+    figure;
+    ax=gca;
+    histogram(ims.FWD,30);
+    ax.FontSize=20;
+    xlabel('Fiber Width (nm)');
+    ylabel('Number of Fibers');
+end
+
 % save('widtest')
 
 end

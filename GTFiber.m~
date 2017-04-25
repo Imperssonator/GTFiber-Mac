@@ -174,8 +174,7 @@ if ~isfield(handles.ims,'AngMap')
     return
 end
 
-% AngleColorMap(handles.ims.AngMap,handles.ims.segsInit);
-FiberVec_ACM(handles.ims);
+AngleColorMap(handles.ims.AngMap,handles.ims.segsInit);
 
 
 % --- Executes on button press in op2d.
@@ -200,7 +199,7 @@ if ~isfield(handles.ims,'Fibers')
 end
 
 plotS2D(handles.ims,0);
-% Here is where you would plot the orientation distribution
+% Here is where you would plot the 
 
 guidata(hObject, handles);
 

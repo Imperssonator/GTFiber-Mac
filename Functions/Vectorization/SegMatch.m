@@ -1,4 +1,4 @@
-function ims = SegMatch(ims,settings)
+function ims = SegMatch(ims)
 
 %% Image Characteristics
 % load(IMS)
@@ -7,9 +7,9 @@ NumSegs = length(ims.fibSegs);
 NumEnds = 2*NumSegs;
 
 %% Hard Coded:
-SearchLat = settings.searchLat;             % Now fraction of image width (was 90);
-SearchLong = settings.searchLong;           % was 200;
-MinLength = settings.maxBranchSizenm;       % Any segment less than 'maxBranchSizenm' nm long will be cleaned out
+SearchLat = ims.settings.searchLat;             % Now fraction of image width (was 90);
+SearchLong = ims.settings.searchLong;           % was 200;
+MinLength = ims.settings.maxBranchSizenm;       % Any segment less than 'maxBranchSizenm' nm long will be cleaned out
 
 [m,n] = size(ims.segsInit);
 pixdim = ims.nmPix;                         % size of a pixel in nm
@@ -104,7 +104,7 @@ for j = 1:NumSegs %1155:1155
             ME_temp = ims.EndLib(j,ep).MatchEnds;   % Too long to type
             MatchLinInds = (ME_temp(:,2)-1)*NumSegs+ME_temp(:,1);
             
-            ims.EndLib(j,ep).coScores = getCoScores(ims,j,ep,settings);      % Get cosine scores for each match
+            ims.EndLib(j,ep).coScores = getCoScores(ims,j,ep);      % Get cosine scores for each match
             ims.EndLib(j,ep).MatchTable = ...
                 sortrows([ims.EndLib(j,ep).MatchEnds, MatchLinInds, ims.EndLib(j,ep).coScores],4);
             
@@ -358,7 +358,7 @@ end
 
 end
 
-function coScores = getCoScores(IMS,j,ep,settings)
+function coScores = getCoScores(IMS,j,ep)
 
 %% Cosine Scores
 % cosine( searchVec1 , connVec ) * cosine( searchVec2 , connVec )
@@ -375,7 +375,7 @@ for i = 1:m
     searchVec_m = IMS.EndLib(mj,mep).SearchVec;
     coScores(i,1) = dot(searchVec1,connVec)/(norm(searchVec1)*norm(connVec)) *...
                     dot(connVec,searchVec_m)/(norm(connVec)*norm(searchVec_m)) +...
-                    ( (dot(searchVec1,searchVec_m)/(norm(searchVec1)*norm(searchVec_m))) > cosd(180-settings.maxAngleDeg) )*1000;
+                    ( (dot(searchVec1,searchVec_m)/(norm(searchVec1)*norm(searchVec_m))) > cosd(180-IMS.settings.maxAngleDeg) )*1000;
 end
 
 end

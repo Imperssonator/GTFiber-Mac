@@ -1,4 +1,4 @@
-function ims = BreakHighCurvSegs(ims,settings)
+function ims = BreakHighCurvSegs(ims)
 
 % Start with Initial segs
 segsBroken = ims.segsInit;
@@ -22,7 +22,7 @@ for i = 1:length(ims.fibSegs)
     
     % Remove pixels from segsBroken if they belong to high curvature path
     % segments
-    high_curv_ang_inds = find(ims.fibSegs(i).angs > settings.maxAngleDeg*pi/180);
+    high_curv_ang_inds = find(ims.fibSegs(i).angs > ims.settings.maxAngleDeg*pi/180);
     high_curv_bins = [high_curv_ang_inds, high_curv_ang_inds+1];
     high_curv_pix = ~~MultiEquiv(pathBins,high_curv_bins);
     

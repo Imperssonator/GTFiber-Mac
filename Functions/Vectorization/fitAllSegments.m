@@ -1,4 +1,4 @@
-function ims = fitAllSegments(ims,settings)
+function ims = fitAllSegments(ims)
 
 if isfield(ims,'fibSegs')
     ims = rmfield(ims,'fibSegs');
@@ -26,7 +26,7 @@ for i = 1:numSegs
     ims.fibSegs(i).sortPixInds = sorted_seg(:,1);
     ims.fibSegs(i).sortPixSubs = ind2subv(size(ims.SegLabels),sorted_seg(:,1));
     
-    ims = FitSegment(ims,settings,i);
+    ims = FitSegment(ims,i);
     
 %     high_curve = [high_curve; sorted_seg(ims.fibSegs(i).curv>1e-03,1)];
 end
@@ -37,7 +37,7 @@ end
 
 end
 
-function ims = FitSegment(ims,settings,segNum)
+function ims = FitSegment(ims,segNum)
 
 % Basically taking the active contours algorithm from FiberApp and giving it
 % an extremely good initial guess - just a list of the pixels that are the
@@ -54,7 +54,7 @@ fibSegImg = ims.SegLabels==segNum;
 
 [gradX, gradY] = gradient2Dx2(fibSegImg);
 
-fiberStep = settings.fiberStep;  % Number of pixels a discrete step should take
+fiberStep = ims.settings.fiberStep;  % Number of pixels a discrete step should take
 
 % Short names for fiber tracking parameters and data
 xy_col = ims.fibSegs(segNum).sortPixSubs;    % column vector of i,j coords of pixels in order
