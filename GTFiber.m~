@@ -58,8 +58,15 @@ function GTFiber_OpeningFcn(hObject, eventdata, handles, varargin)
 handles.output = hObject;
 addpath(genpath(pwd))
 
-if ispc()
- 
+handles.text35.FontSize
+
+if ispc
+    for i = 1:length(fields(handles))
+        try
+            handles.Children(i).FontSize = handles.Children(i).FontSize / 2;
+        end
+    end
+end
 
 % Update handles structure
 guidata(hObject, handles);
