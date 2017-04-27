@@ -240,17 +240,9 @@ num_lines = 1;
 fileName = inputdlg(prompt,dlg_title,num_lines);
 saveFilePath = [folderPath, fileName{1}, '.csv'];
 
-% Solicit range of molecular weight and PDI for simulations
-prompt = {'List of Mn to use', 'List of PDI to use', 'Number of simulations per point'};
-dlg_title = 'MW Parameters';
-num_lines = 3;
-Mn_input = inputdlg(prompt,dlg_title,num_lines);
 
-Mn_vec = str2num(Mn_input{1});
-PDI_vec = str2num(Mn_input{2});
-nruns = str2num(Mn_input{3});
 
-run_directory_CS(handles,folderPath,saveFilePath,Mn_vec,PDI_vec,nruns);
+run_directory_CS(handles,folderPath,saveFilePath);
 
 
 

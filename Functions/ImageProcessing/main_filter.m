@@ -52,7 +52,7 @@ handles=imshowGT(ims.skelTrim,handles,'img_axes');
 
 % Generate Angle Map by getting new angles from CED
 waitbar(0.9,hwait,'Recovering Orientations...');
-ims.AngMap = atand(ims.v1xn./-ims.v1yn);
+ims.AngMap = atand(ims.v1x./-ims.v1y);
 
 handles.ims = ims;
 % save('filter_debug','ims')

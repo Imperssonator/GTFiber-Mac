@@ -115,9 +115,7 @@ end
 ims.Chains = Chains;
 ims.ChainLabels = ChainLabels;
 
-if figSwitch
-    F = getframe(f1);
-    Fim = F.cdata;
-end
+F = getframe(f1);
+Fim = F.cdata;
 
 end
