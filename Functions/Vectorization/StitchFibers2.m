@@ -39,10 +39,12 @@ ims = SegMatch(ims);
 waitbar(0.8,hwait,'Vectorizing Final Fibers...');
 ims = fitAllFibers(ims);
 
-% 8. Calculate op2d
-waitbar(0.9,hwait,'Analyzing Orientational Order...');
+% 8. Calculate op2d and fiber length and width distributions
+waitbar(0.9,hwait,'Analyzing Structure...');
 ims = op2d_vec(ims);
-
+ims = calc_orient_dist(ims);
+ims = FiberLengths(ims);
+ims = FiberWidths(ims);
 
 save('sf2debug_2','ims')
 close(hwait)

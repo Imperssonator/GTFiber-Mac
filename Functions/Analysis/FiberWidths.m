@@ -1,4 +1,4 @@
-function ims = FiberWidths(ims,figSwitch)
+function ims = FiberWidths(ims)
 
 numSamps = ims.settings.fibWidSamps2;
 
@@ -35,15 +35,6 @@ for i = 1:length(ims.Fibers)
 end
 
 ims.FWD = [ims.Fibers(:).Width];
-
-if figSwitch
-    figure;
-    ax=gca;
-    histogram(ims.FWD,30);
-    ax.FontSize=20;
-    xlabel('Fiber Width (nm)');
-    ylabel('Number of Fibers');
-end
 
 % save('widtest')
 

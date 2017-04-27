@@ -1,4 +1,4 @@
-function ims = FiberLengths(ims,figSwitch)
+function ims = FiberLengths(ims)
 
 numFibs = length(ims.Fibers);
 FLD = zeros(numFibs,1);
@@ -9,15 +9,5 @@ for i = 1:length(ims.Fibers)
 end
 
 ims.FLD = FLD;
-
-if figSwitch
-    figure;
-    ax=gca;
-    histogram(FLD,30);
-    ax.FontSize=20;
-    xlabel('Fiber Length (nm)');
-    ylabel('Number of Fibers');
-end
-
 
 end

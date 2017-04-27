@@ -16,8 +16,8 @@ ims.settings.Options.rho = ims.settings.rhonm/ims.nmPix;
 
 % Match Search settings
 ims.settings.fiberStep_nm = ims.settings.fiberStep * ims.nmPix;
-ims.settings.searchLat = 0.02 * ims.nmWid;
-ims.settings.searchLong = 0.04 * ims.nmWid;
+ims.settings.searchLat = 0.01 * ims.nmWid;
+ims.settings.searchLong = ims.settings.stitchGap;
 
 
 end

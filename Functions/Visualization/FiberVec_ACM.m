@@ -1,10 +1,17 @@
-function ims = FiberVec_ACM(ims)
+function ims = FiberVec_ACM(ims,figSave)
 
 % Plot the vectorized fibers, except with each individual segment colored
 % by its orientation. This is probably the ideal visualization for the
 % Orientation Map, but it's incredibly slow.
 
+hwait = waitbar(0,'Generating Orientation Map...');
+
+if exist('figSave','var')~=1
+    figSave=0;
+end
+
 XY = {ims.Fibers(:).xy};
+numFibs = length(XY);
 w = size(ims.img,2);
 h = size(ims.img,1);
 sat = 0.92;
@@ -16,8 +23,12 @@ f1.InvertHardcopy='off';
 ha = axes('parent',f1);
 hold on
 
-for i = 1:length(XY)
-XYi = XY{i};
+for i = 1:numFibs
+    
+    waitbar(i/numFibs,hwait,...
+        ['Coloring Fiber ', num2str(i), ' of ', num2str(numFibs), '...']);
+    
+    XYi = XY{i};
     for j = 1:size(XYi,2)-1
         xy_ij = XYi(:,j:j+1);
         xy_vec = xy_ij(:,2)-xy_ij(:,1);
@@ -25,7 +36,7 @@ XYi = XY{i};
         if ang_ij<0
             ang_ij = ang_ij+180;
         end
-        plot(ha,xy_ij(1,:),xy_ij(2,:),'Color',hsv2rgb(2*ang_ij/360,1,sat),'LineWidth',4)
+        plot(ha,xy_ij(1,:),xy_ij(2,:),'Color',hsv2rgb(2*ang_ij/360,1,sat),'LineWidth',3)
     end
 end
 % axis equal
@@ -41,7 +52,15 @@ ax.Position = [0 0 1 1];
 F = getframe(f1);
 Fim = F.cdata;
 Fres = imresize(Fim,[h, w]);
-% 
-% close(f1)
+
+ampos = f1.Position;
+legpos = [ampos(1)+ampos(3), ampos(2)];
+hleg = Angle_Legend(legpos);
+
+if figSave
+    imwrite(Fres, [ims.figSavePath, '_AM', '.tif']);
+    close(f1)
+    close(hleg)
+end
 
 end

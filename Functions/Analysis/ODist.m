@@ -134,7 +134,7 @@ end
 function [AngMap, Dirs] = RecoverAnglesOD(J)
 
 % disp('Finding Angles...')
-tic
+
 [m, n] = size(J(:,:,1));
 JE = zeros(m,n,2);
 JV = zeros(m,n,4);
@@ -160,6 +160,6 @@ end
 % Coher = ((JESort(:,:,1)-JESort(:,:,2))./(JESort(:,:,1)+JESort(:,:,2))).^2;
 Dirs = JVSort(:,:,1:2);
 AngMap = atan2d(JVSort(:,:,2),JVSort(:,:,1));      % last evec is 'coherence orientation'
-toc
+
 
 end
