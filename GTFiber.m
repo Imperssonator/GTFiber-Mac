@@ -30,7 +30,7 @@ function varargout = GTFiber(varargin)
 
 % Edit the above text to modify the response to help GTFiber
 
-% Last Modified by GUIDE v2.5 27-Apr-2017 16:59:38
+% Last Modified by GUIDE v2.5 27-Apr-2017 19:17:32
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -576,5 +576,3 @@ end
 
 
 function scaleParams_Callback(hObject, eventdata, handles)
-
-
