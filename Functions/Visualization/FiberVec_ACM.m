@@ -63,4 +63,6 @@ if figSave
     close(hleg)
 end
 
+close(hwait)
+
 end

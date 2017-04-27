@@ -52,8 +52,6 @@ handles=imshowGT(ims.skelTrim,handles,'img_axes');
 
 % Generate Angle Map by getting new angles from CED
 waitbar(0.9,hwait,'Recovering Orientations...');
-Options.T = 1;
-[~, ims.v1xn, ims.v1yn] = CoherenceFilter(ims.skelTrim,Options);
 ims.AngMap = atand(ims.v1xn./-ims.v1yn);
 
 handles.ims = ims;

@@ -43,8 +43,8 @@ settings.fibWidSamps2 = 15;
 settings.fiberStep = ceil(str2num(get(handles.fiberStep,'String')));
 settings.maxAngleDeg = str2num(get(handles.maxAngleDeg,'String'));
 % settings.curvLen = str2num(get(handles.curvLen,'String'));
-settings.minWidthnm = str2num(get(handles.minWidth,'String'));
-settings.maxWidthnm = str2num(get(handles.maxWidth,'String'));
+% settings.minWidthnm = str2num(get(handles.minWidth,'String'));
+% settings.maxWidthnm = str2num(get(handles.maxWidth,'String'));
 settings.stitchGap = str2num(get(handles.stitchGap,'String'));
 
 
