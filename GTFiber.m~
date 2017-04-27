@@ -30,7 +30,7 @@ function varargout = GTFiber(varargin)
 
 % Edit the above text to modify the response to help GTFiber
 
-% Last Modified by GUIDE v2.5 27-Apr-2017 16:59:38
+% Last Modified by GUIDE v2.5 27-Apr-2017 19:17:32
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -57,6 +57,9 @@ function GTFiber_OpeningFcn(hObject, eventdata, handles, varargin)
 % Choose default command line output for GTFiber
 handles.output = hObject;
 addpath(genpath(pwd))
+
+if ispc()
+ 
 
 % Update handles structure
 guidata(hObject, handles);
@@ -240,9 +243,17 @@ num_lines = 1;
 fileName = inputdlg(prompt,dlg_title,num_lines);
 saveFilePath = [folderPath, fileName{1}, '.csv'];
 
+% Solicit range of molecular weight and PDI for simulations
+prompt = {'List of Mn to use', 'List of PDI to use', 'Number of simulations per point'};
+dlg_title = 'MW Parameters';
+num_lines = 3;
+Mn_input = inputdlg(prompt,dlg_title,num_lines);
 
+Mn_vec = str2num(Mn_input{1});
+PDI_vec = str2num(Mn_input{2});
+nruns = str2num(Mn_input{3});
 
-run_directory_CS(handles,folderPath,saveFilePath);
+run_directory_CS(handles,folderPath,saveFilePath,Mn_vec,PDI_vec,nruns);
 
 
 
@@ -568,5 +579,3 @@ end
 
 
 function scaleParams_Callback(hObject, eventdata, handles)
-
-
