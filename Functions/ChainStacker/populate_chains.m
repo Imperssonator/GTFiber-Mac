@@ -87,24 +87,24 @@ for f = 1:length(ims.Fibers)
         ortho_vec = [-stack_vec(2); stack_vec(1)];
         ortho_unit_vec = ortho_vec./norm(ortho_vec);
         
-        % The stack will be a 2x2xn stack of chain endpoints:
-        % | end1_x, end2_x |
-        % | end1_y, end2_y |  ... 
+        % The stack will be an Nx4 stack of chain endpoints:
+        % | x1_end1 y1_end1 x1_end2 y1_end2 |
+        % | xn_end1 yn_end1 xn_end2 yn_end2 |
         
-        stack = zeros(2,2,size(stack_pts,1));
-        stack(1,1,:) = stack_pts_2d(:,1)-half_chain_lengths.*ortho_unit_vec(1);
-        stack(2,1,:) = stack_pts_2d(:,2)-half_chain_lengths.*ortho_unit_vec(2);
-        stack(1,2,:) = stack_pts_2d(:,1)+half_chain_lengths.*ortho_unit_vec(1);
-        stack(2,2,:) = stack_pts_2d(:,2)+half_chain_lengths.*ortho_unit_vec(2);
+        stack = zeros(size(stack_pts,1),4);
+        stack(:,1) = stack_pts_2d(:,1)-half_chain_lengths.*ortho_unit_vec(1);
+        stack(:,2) = stack_pts_2d(:,2)-half_chain_lengths.*ortho_unit_vec(2);
+        stack(:,3) = stack_pts_2d(:,1)+half_chain_lengths.*ortho_unit_vec(1);
+        stack(:,4) = stack_pts_2d(:,2)+half_chain_lengths.*ortho_unit_vec(2);
         
-        StackLabels = ones(size(stack,3),1).*f;
+        StackLabels = ones(size(stack,1),1).*f;
         ChainLabels = cat(1,ChainLabels,StackLabels);
-        Chains = cat(3,Chains,stack);
+        Chains = cat(1,Chains,stack);
         
         if figSwitch
             if ismember(f,[297,365,345,325,337])
                 for i = 1:size(stack,3)
-                    plot(ax,stack(1,:,i),stack(2,:,i),'-b');
+                    plot(ax,stack(i,1:2),stack(i,3:4),'-b');
                 end
             end
         end
