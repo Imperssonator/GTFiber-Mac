@@ -102,9 +102,9 @@ for f = 1:length(ims.Fibers)
         Chains = cat(1,Chains,stack);
         
         if figSwitch
-            if ismember(f,[297,365,345,325,337])
-                for i = 1:size(stack,3)
-                    plot(ax,stack(i,1:2),stack(i,3:4),'-b');
+            if 1 %ismember(f,[1, 2, 3, 4, 5, 6, 7, 8, 9])
+                for i = 1:size(stack,1)
+                    plot(ax,stack(i,[1,3]),stack(i,[2,4]),'-b');
                 end
             end
         end

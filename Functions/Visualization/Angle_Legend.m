@@ -3,6 +3,10 @@ function legfig = Angle_Legend(pos)
 % Create a hemispherical color wheel as a legend for the colored angles in
 % the angle color map
 
+if exist('pos','var')~=1
+    pos=[0 0];
+end
+
 % Set radius of hemisphere in pixels
 rr = 220;
 h = rr;
