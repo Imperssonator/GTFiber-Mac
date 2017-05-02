@@ -99,7 +99,7 @@ for i = 1:numIms
             xl{count,11} = std(tcd_vec);
             xl{count,12} = nruns;
             xl{count,13} = length(ims_temp.Fibers);
-            xl{count,14} = size(ims_temp.Chains,3);
+            xl{count,14} = size(ims_temp.Chains,1);
             
         end
     end
