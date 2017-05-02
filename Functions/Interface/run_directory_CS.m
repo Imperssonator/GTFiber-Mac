@@ -82,7 +82,7 @@ for i = 1:numIms
             for r = 1:nruns
                 ims_temp = populate_chains(ims,Mn_vec(m),PDI_vec(p),0);
                 ims_temp = tie_chain_density(ims_temp);
-                tcd_vec = [tcd_vec; mean(ims.tcd_dist)];
+                tcd_vec = [tcd_vec; mean(ims_temp.tc_dist)];
             end
             
             % Write data to csv cell
