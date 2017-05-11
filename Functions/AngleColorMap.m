@@ -1,5 +1,8 @@
-function AngIm = AngleColorMap(AngMap, BW)
+function AngIm = AngleColorMap(ims)
 
+
+AngMap=ims.AngMap;
+BW=ims.skelTrim;
 sat = 0.88;
 
 AngMapNaN = AngMap;
@@ -23,6 +26,10 @@ legpos = [ampos(1)+ampos(3), ampos(2)];
 Angle_Legend(legpos);
 
 ODist(AngMapNaN,5,'');
+if exist(ims.figSavePath(1:findLastSlash(ims.figSavePath)),'dir') ~= 7
+    mkdir(ims.figSavePath(1:findLastSlash(ims.figSavePath)))
+end
+dlmwrite([ims.figSavePath, '_OMap.txt'],AngMapNaN);
 
 end
 

@@ -66,7 +66,8 @@ end
 
 % Generate Angle Map by getting new angles from CED
 waitbar(0.9,hwait,'Recovering Orientations...');
-Options.T = 1;
+Options.T = 0.2;
+% Options.rho = 2;
 [~, ims.v1xn, ims.v1yn] = CoherenceFilter(ims.skelTrim,Options);
 ims.AngMap = atand(ims.v1xn./-ims.v1yn);
 

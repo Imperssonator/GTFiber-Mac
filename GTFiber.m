@@ -163,7 +163,7 @@ end
 % handles.ims.pixWid = size(handles.img,2);
 % handles.ims.nmPix = handles.ims.nmWid/handles.ims.pixWid;
 
-AngleColorMap(handles.ims.AngMap,handles.ims.skelTrim);
+AngleColorMap(handles.ims);
 
 
 % --- Executes on button press in op2d.

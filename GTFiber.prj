@@ -1,11 +1,11 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration build-checksum="2968029542" file="/Users/Imperssonator/Documents/MATLAB/GTFiber-Mac/GTFiber.prj" location="/Users/Imperssonator/Documents/MATLAB/GTFiber-Mac" name="GTFiber" preferred-package-location="/Users/Imperssonator/Documents/MATLAB/GTFiber-Mac/GTFiber/for_redistribution" preferred-package-type="package.type.app" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="1252499175" file="/Users/Imperssonator/Documents/MATLAB/GTFiber-Mac/GTFiber.prj" location="/Users/Imperssonator/Documents/MATLAB/GTFiber-Mac" name="GTFiber" preferred-package-location="/Users/Imperssonator/Documents/MATLAB/GTFiber-Mac/GTFiber/for_redistribution" preferred-package-type="package.type.app" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>GTFiber</param.appname>
     <param.icon />
     <param.icons />
-    <param.version>1.1</param.version>
+    <param.version>1.2</param.version>
     <param.authnamewatermark>Nils Persson</param.authnamewatermark>
-    <param.email>npersson3@gatech.edu</param.email>
+    <param.email>NEPersson@gmail.com</param.email>
     <param.company />
     <param.summary />
     <param.description />
@@ -45,7 +45,7 @@ If it is defined, set it to the concatenation of these strings:
     <param.web.mcr>true</param.web.mcr>
     <param.package.mcr>false</param.package.mcr>
     <param.no.mcr>false</param.no.mcr>
-    <param.web.mcr.name>MyAppInstaller_web</param.web.mcr.name>
+    <param.web.mcr.name>Install_the_App</param.web.mcr.name>
     <param.package.mcr.name>MyAppInstaller_mcr</param.package.mcr.name>
     <param.no.mcr.name>MyAppInstaller_app</param.no.mcr.name>
     <param.windows.command.prompt>false</param.windows.command.prompt>
@@ -73,7 +73,6 @@ If it is defined, set it to the concatenation of these strings:
       <param.web.mcr />
       <param.package.mcr />
       <param.no.mcr />
-      <param.web.mcr.name />
       <param.package.mcr.name />
       <param.no.mcr.name />
       <param.windows.command.prompt />
@@ -83,13 +82,63 @@ If it is defined, set it to the concatenation of these strings:
     <fileset.main>
       <file>${PROJECT_ROOT}/GTFiber.m</file>
     </fileset.main>
-    <fileset.resources>
-      <file>${PROJECT_ROOT}/Functions</file>
-    </fileset.resources>
+    <fileset.resources />
     <fileset.package />
     <fileset.depfun>
+      <file>${PROJECT_ROOT}/Functions/AngleColorMap.m</file>
+      <file>${PROJECT_ROOT}/Functions/FiberLengths.m</file>
+      <file>${PROJECT_ROOT}/Functions/FiberPlot.m</file>
+      <file>${PROJECT_ROOT}/Functions/FiberWidths.m</file>
+      <file>${PROJECT_ROOT}/Functions/MultiEquiv.m</file>
+      <file>${PROJECT_ROOT}/Functions/ODist.m</file>
+      <file>${PROJECT_ROOT}/Functions/RemoveHoles.m</file>
+      <file>${PROJECT_ROOT}/Functions/YBSimpleSeg.m</file>
+      <file>${PROJECT_ROOT}/Functions/cell2csv/cell2csv.m</file>
+      <file>${PROJECT_ROOT}/Functions/cleanSkel.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/CoherenceFilter.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions/derivatives.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions/derivatives.mexmaci64</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions/imgaussian.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions/imgaussian.mexmaci64</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions2D/CoherenceFilterStep2D.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions2D/CoherenceFilterStep2D.mexmaci64</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions2D/ConstructDiffusionTensor2D.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions2D/EigenVectors2D.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions2D/StructureTensor2D.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions2D/diffusion_scheme_2D_implicit.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions2D/diffusion_scheme_2D_non_negativity.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions2D/diffusion_scheme_2D_novel.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions2D/diffusion_scheme_2D_rotation_invariant.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions2D/diffusion_scheme_2D_standard.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions3D/CoherenceFilterStep3D.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions3D/CoherenceFilterStep3D.mexmaci64</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions3D/StructureTensor2DiffusionTensor3D.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions3D/StructureTensor2DiffusionTensor3D.mexmaci64</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions3D/StructureTensor3D.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions3D/diffusion_scheme_3D_implicit.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions3D/diffusion_scheme_3D_non_negativity.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions3D/diffusion_scheme_3D_non_negativity.mexmaci64</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions3D/diffusion_scheme_3D_novel.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions3D/diffusion_scheme_3D_novel_getUpdate.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions3D/diffusion_scheme_3D_novel_getUpdate.mexmaci64</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions3D/diffusion_scheme_3D_rotation_invariant.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions3D/diffusion_scheme_3D_rotation_invariant.mexmaci64</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions3D/diffusion_scheme_3D_standard.m</file>
+      <file>${PROJECT_ROOT}/Functions/coherencefilter_version5b/functions3D/diffusion_scheme_3D_standard.mexmaci64</file>
+      <file>${PROJECT_ROOT}/Functions/findLastDot.m</file>
+      <file>${PROJECT_ROOT}/Functions/findLastSlash.m</file>
+      <file>${PROJECT_ROOT}/Functions/getS2Dauto.m</file>
+      <file>${PROJECT_ROOT}/Functions/get_settings.m</file>
+      <file>${PROJECT_ROOT}/Functions/gif_filter.m</file>
+      <file>${PROJECT_ROOT}/Functions/gif_op2d_am.m</file>
+      <file>${PROJECT_ROOT}/Functions/ind2subv.m</file>
+      <file>${PROJECT_ROOT}/Functions/initImgData.m</file>
+      <file>${PROJECT_ROOT}/Functions/main_filter.m</file>
+      <file>${PROJECT_ROOT}/Functions/op2d_am.m</file>
+      <file>${PROJECT_ROOT}/Functions/pix_settings.m</file>
+      <file>${PROJECT_ROOT}/Functions/runDir.m</file>
+      <file>${PROJECT_ROOT}/Functions/runDirFLD.m</file>
       <file>${PROJECT_ROOT}/GTFiber.fig</file>
-      <file>/Users/Imperssonator/Documents/MATLAB/YBSimpleSeg.m</file>
     </fileset.depfun>
     <build-deliverables>
       <file location="${PROJECT_ROOT}/GTFiber/for_testing" name="GTFiber.app" optional="false">/Users/Imperssonator/Documents/MATLAB/GTFiber-Mac/GTFiber/for_testing/GTFiber.app</file>
