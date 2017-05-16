@@ -6,6 +6,8 @@ numFibs = max(max(ims.FiberLabels));
 % list of pixels where the list increases by distance from one end of the
 % segment, which is quantified by the bwdistgeodesic function
 
+
+
 for f = 1:numFibs
 %     disp(i)
     ims = FitFiber(ims,f);
@@ -29,40 +31,41 @@ function ims = FitFiber(ims,fibNum)
 FiberSegs = ims.Fibers(fibNum).FiberSegs;                   % Labels of segments in fiber
 numFibSegs = length(FiberSegs);
 StartInds = ims.Fibers(fibNum).Fiber(1:2:end);              % Indices of the first endpoint of each segment in the chain
-fibImg = ims.FiberLabels==fibNum;
+fibImg = int16(ims.gray);
 sortPixInds = [];
 
 for i = 1:numFibSegs
-    coord = ims.EndLib(StartInds(i)).EPCoord;                       % Get grid coordinates of starting endpoint
-    end_ind = sub2ind(size(ims.SegLabels),coord(1),coord(2));       % Get grid linear index of starting endpoint
-    dd = bwdistgeodesic(ims.SegLabels==FiberSegs(i),end_ind);       % Get geodesic distances of segment pixels from selected endpoint
-    seg_inds = find(ims.SegLabels==FiberSegs(i));                   % Get linear indices of pixels in this segment
-    vals = dd(seg_inds);                                            % Get the values of these pixels' geo. distances
-    seg_list = [seg_inds, vals];                                    % Make a table
-    sorted_seg = sortrows(seg_list,2);                              % Sort it
-    sortPixInds = [sortPixInds; sorted_seg(:,1)];                   % Add it to the existing list
+    
+    if StartInds(i) <= length(ims.EndLib)                           % If the start ind is the 'first' index of that segment
+        sortPixInds = [sortPixInds;                                 % Take the sorted pixel indices as they are
+                       ims.fibSegs(FiberSegs(i)).sortPixInds];
+    else                                                            % Otherwise, flip them upside down
+        sortPixInds = [sortPixInds;
+                       ims.fibSegs(FiberSegs(i)).sortPixInds(end:-1:1)];
+    end
+    
 end
 
-ims.Fibers(fibNum).sortPixInds = sortPixInds(:,1);
-ims.Fibers(fibNum).sortPixSubs = ind2subv(size(ims.SegLabels),sortPixInds(:,1));
+ims.Fibers(fibNum).sortPixInds = sortPixInds;
+ims.Fibers(fibNum).sortPixSubs = ind2subv(size(ims.SegLabels),sortPixInds);
 
-[gradX, gradY] = gradient2Dx2(ims.gray);
+[gradX, gradY] = gradient2Dx2(fibImg);
 
 fiberStep = ims.settings.fiberStep;  % Number of pixels a discrete step should take
     
 % Short names for fiber tracking parameters and data
 xy_col = ims.Fibers(fibNum).sortPixSubs;    % column vector of i,j coords of pixels in order
-xy = flipud(xy_col') - 0.5;
+xy = flipud(xy_col');
 xy = distributePoints(xy,fiberStep);
 a = 0;
-b = 20;
-g = 20;
+b = 5;
+g = 10;
 k1 = 20;
 k2 = 10;
 fiberIntensity = 255;
 
 % Apply fitting algorithm FA.iterations times
-for k = 1:10
+for k = 1:20
     % Construct a matrix M for the internal energy contribution
     n = length(xy);
     

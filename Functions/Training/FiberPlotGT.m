@@ -1,10 +1,10 @@
-function handles = FiberVecPlot_stitch(handles)
+function FiberIm = FiberPlotGT(ims)
 
 % Given imageData filepath, plot the fibers.
 
-XY = {handles.ims.Fibers(:).xy};
-w = size(handles.ims.img,2);
-h = size(handles.ims.img,1);
+XY = {ims.Fibers(:).xy};
+w = size(ims.img,2);
+h = size(ims.img,1);
 
 f1 = figure('Visible','off');
 f1.Position = [1 1 1+w 1+h];
@@ -14,7 +14,7 @@ hold on
 
 for i = 1:length(XY)
 XYi = XY{i};
-plot(ha,XYi(1,:),XYi(2,:),'Color',rand(1,3),'LineWidth',2)
+plot(ha,XYi(1,:),XYi(2,:),'-b','LineWidth',1)
 end
 % axis equal
 set(ha,'Ydir','reverse')
@@ -28,9 +28,7 @@ ax.Position = [0 0 1 1];
 
 F = getframe(f1);
 Fim = F.cdata;
-Fres = imresize(Fim,[h, w]);
-
-handles = imshowGT(Fres,handles,'fiber_axes');
-close(f1)
+FiberIm = imresize(Fim,[h, w]);
+imtool(FiberIm)
 
 end

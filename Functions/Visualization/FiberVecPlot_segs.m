@@ -1,8 +1,8 @@
-function handles = FiberVecPlot_stitch(handles)
+function handles = FiberVecPlot_segs(handles)
 
 % Given imageData filepath, plot the fibers.
 
-XY = {handles.ims.Fibers(:).xy};
+XY = {handles.ims.fibSegs(:).xy};
 w = size(handles.ims.img,2);
 h = size(handles.ims.img,1);
 
@@ -14,18 +14,16 @@ hold on
 
 for i = 1:length(XY)
 XYi = XY{i};
-plot(ha,XYi(1,:),XYi(2,:),'Color',rand(1,3),'LineWidth',2)
+plot(ha,XYi(1,:),XYi(2,:),'-b','LineWidth',2)
 end
 % axis equal
 set(ha,'Ydir','reverse')
 ax = ha;
 ax.XLim = [0 w];
 ax.YLim = [0 h];
-
 ax.Visible = 'off';
 % ax.PlotBoxAspectRatio = [1 1 1];
 ax.Position = [0 0 1 1];
-
 F = getframe(f1);
 Fim = F.cdata;
 Fres = imresize(Fim,[h, w]);

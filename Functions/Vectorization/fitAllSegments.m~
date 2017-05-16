@@ -51,7 +51,7 @@ fiberStep = ims.settings.fiberStep;  % Number of pixels a discrete step should t
 
 % Short names for fiber tracking parameters and data
 xy_col = ims.fibSegs(segNum).sortPixSubs;    % column vector of i,j coords of pixels in order
-xy = flipud(xy_col');
+xy = flipud(xy_col') - 0.5;
 xy = distributePoints(xy,fiberStep);
 
 a = 0;

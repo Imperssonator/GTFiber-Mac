@@ -515,7 +515,7 @@ guidata(hObject, handles);
 function showSegs_Callback(hObject, eventdata, handles)
 
 if isfield(handles.ims,'fibSegs')
-    handles=FiberVecPlot(handles);
+    handles=FiberVecPlot_segs(handles);
 end
 guidata(hObject, handles);
 

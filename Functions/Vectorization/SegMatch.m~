@@ -39,9 +39,9 @@ Kernel = ones(Kh,Kw);                           % The search kernel
 % sometimes drops this pixel. Therefore I store the "start pixel" as a
 % vector from the center of the image, which is conserved during rotation.
 
-KCent = [Kh/2,Kw/2];
-KStart = [Kh/2,3];
-KStart_rel = KStart-KCent;  % Vector from center of kernel to start pixel, in units of matrix indices
+Kcent = [Kh/2,Kw/2];
+Kstart = [Kh/2,3];
+Kstart_rel = Kstart-Kcent;  % Vector from center of kernel to start pixel, in units of matrix indices
 
 %% Run The Algo
 
@@ -72,9 +72,9 @@ for j = 1:NumSegs
         RotKern = imrotate(Kernel,SearchAngle);                     % Rotate the kernel to that angle
         RotKStart_rel = [cosd(SearchAngle), -sind(SearchAngle);...  % Rotate the kernel start point to that angle
                          sind(SearchAngle), cos(SearchAngle)]...
-                         * KStart_rel';
+                         * Kstart_rel;
         RotKCent = size(RotKern)./2;
-        RotKStart = round(RotKStart_rel'+RotKCent);
+        RotKStart = round(RotKStart_rel+RotKCent
         
         EPMatch = KernSearch(ims.EndsImg,RotKern,RotKStart,ims.End2Sub{j,ep});
         ims.EndLib(j,ep).MatchSubs = EPMatch;               % This is the matrix of subscript indices of endpoints that match with this endpoint
@@ -310,9 +310,9 @@ function Matches = KernSearch(Ends,RotKern,RotKStart,EP)
 
 [Km,Kn] = size(RotKern);
 [Im,In] = size(Ends);
-RKi = RotKStart(1); RKj = RotKStart(2);
+[RKi RKj] = find(RotKStart,1);
 EPi = EP(1); EPj = EP(2);
-RotKern(RKi,RKj) = 0;
+SearchKern = RotKern-RotKStart;
 
 Dt = RKi-1; Db = Km-RKi;
 Dl = RKj-1; Dr = Kn-RKj;
@@ -330,7 +330,7 @@ Kl = RKj-(EPj-IMl);
 Kr = RKj+(IMr-EPj);
 
 % Find endpoints covered by search kern
-MatchPts = RotKern(Kt:Kb,Kl:Kr).*Ends(IMt:IMb,IMl:IMr);
+MatchPts = SearchKern(Kt:Kb,Kl:Kr).*Ends(IMt:IMb,IMl:IMr);
 [Mati,Matj] = find(sparse(MatchPts));
 Matchi = Mati+IMt-1;
 Matchj = Matj+IMl-1;
