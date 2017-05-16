@@ -116,18 +116,17 @@ for k = 1:10
     xy = distributePoints((g*xy+vf)/M, fiberStep);
 end
 
-if length(xy)>3
-    xy_vec = diff(xy,1,2);
-    dots = sum(xy_vec(:,1:end-1).*xy_vec(:,2:end),1) ./...
-           (sqrt(sum(xy_vec(:,1:end-1).^2,1)) .* sqrt(sum(xy_vec(:,2:end).^2,1)));  % This is just stupid
-    dots(dots>1) = 1;
-    angs = acos(dots);
+if size(xy,2)>=3
+    dxy=(xy(:,3:end)-xy(:,1:end-2))./(2*ims.settings.fiberStep);
+    ddxy=(xy(:,3:end)-2.*xy(:,2:end-1)+xy(:,1:end-2))./(ims.settings.fiberStep)^2;
+    curv=(dxy(1,:).*ddxy(2,:)-dxy(2,:).*ddxy(1,:))./sum(dxy.^2,1).^(1.5);
+    curv=[0,abs(curv),0];
 else
-    angs = zeros(1,size(xy,2)-1);
+    curv = zeros(1,size(xy,2));
 end
 
 % Save fiber data
-ims.fibSegs(segNum).angs = angs;
+ims.fibSegs(segNum).curv = curv;
 ims.fibSegs(segNum).xy = xy;
 ims.EndLib(segNum,1).EVCoord = xy(:,1);             % These are coordinates in FiberApp xy space (x=j, y=i) of the endpoints
 ims.EndLib(segNum,2).EVCoord = xy(:,end);
