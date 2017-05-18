@@ -26,9 +26,12 @@ ax.Visible = 'off';
 % ax.PlotBoxAspectRatio = [1 1 1];
 ax.Position = [0 0 1 1];
 
+f1.GraphicsSmoothing = 'off';
+
 F = getframe(f1);
 Fim = F.cdata;
 FiberIm = imresize(Fim,[h, w]);
+close(f1)
 imtool(FiberIm)
 
 end

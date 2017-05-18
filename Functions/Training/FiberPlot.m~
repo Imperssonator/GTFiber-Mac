@@ -28,8 +28,5 @@ f1.GraphicsSmoothing = 'off';
 F = getframe(f1);
 Fim = F.cdata;
 Fres = imresize(Fim,[w, h]);
-close(f1)
-
-imtool(Fres)
 
 end

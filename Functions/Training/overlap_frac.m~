@@ -1,0 +1,24 @@
+function out = overlap_frac(fa_path,ims)
+
+im_fa = FiberPlot(fa_path);
+im_gt = FiberPlotGT(ims);
+bw_fa = rgb2gray(im_fa)~=255;
+bw_gt = rgb2gray(im_gt)~=255;
+
+% True positives: # pixels that are 1 in both GT and FA / 
+%                   # of pixels that are 1 in FA
+true_pos = ...
+    sum(sum(...
+    bw_gt & bw_fa))...
+    / sum(sum(bw_fa));
+            
+% False positives: # pixels that are 1 in GT but 0 in FA /
+%                   # of pixels that are 1 in FA
+false_pos = ...
+    sum(sum(...
+    bw_gt & bw_fa...
+    )) / sum(sum(bw_fa));
+false_pos = 
+out = sum(sum(double(bw_gt==bw_fa)))/(256^2);
+
+end
