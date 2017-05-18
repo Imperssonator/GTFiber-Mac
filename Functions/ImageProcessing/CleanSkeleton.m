@@ -19,24 +19,7 @@ skelNoBranch = ims.skelTrim&~bigBranchPts;
 ims.segsInit = bwareaopen(skelNoBranch,ims.settings.maxBranchSize,8);
 
 % Some segments may still have holes, this removes them.
-% It may no longer be necessary.
 
-% ims.segsInit = RemoveHoles(ims.segsInit);
-
-end
-
-function out = RemoveHoles(IM)
-
-L = bwlabel(IM);
-RP = regionprops(IM,'EulerNumber');
-out = zeros(size(L));
-
-for i = 1:length(RP)
-    if RP(i).EulerNumber > 0
-        out = out+double(L==i);
-    end
-end
-
-out = out==1;
+ims.segsInit = RemoveNonLines(ims.segsInit);
 
 end

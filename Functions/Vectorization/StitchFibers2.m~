@@ -2,22 +2,23 @@ function ims = StitchFibers2(ims)
 
 % 2. Label segments and Make EndLib
 hwait = waitbar(0,'Building Endpoint Library...');
+tic
 ims = BuildEndLib(ims);
+toc
 
 % 3. Vectorize Segments - once we are here, we do not go back
 waitbar(0.2,hwait,'Vectorizing Segments...');
+tic
 ims = fitAllSegments(ims);
+toc
 
 % 4. Break high curvatures
 waitbar(0.3,hwait,'Breaking High Curvatures...');
 ims = BreakHighCurvSegs(ims);
 
-% 4.1 Rebuild EndLib
+% 4.5 Rebuild EndLib
 waitbar(0.4,hwait,'Rebuilding Endpoint Library...');
 ims = BuildEndLib(ims);
-
-% 4.2 Re-fit new segments
-waitbar(0.5,hwait,'Re-vectorizing Segments...');
 ims = fitAllSegments(ims);
 
 % % 5. Remove Non-conforming widths (measure widths)

@@ -20,4 +20,5 @@ ims.settings.searchLat = 0.04 * ims.nmWid;
 ims.settings.searchLong = 0.04 * ims.nmWid;
 
 
+
 end

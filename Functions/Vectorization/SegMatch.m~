@@ -91,11 +91,10 @@ for j = 1:NumSegs
         EPMatch_clean = [];
         for i=1:size(EPMatch,1)
             if ims.SegLabels(EPMatch(i,1),EPMatch(i,2))~=j
-                EPMatch_clean = [EPMatch_clean;...
-                                 EPMatch(i,:)];
+                EPMatchEPMatch(i,:)=[];
             end
         end
-        EPMatch = EPMatch_clean;
+        
         ims.EndLib(j,ep).MatchSubs = EPMatch;               % This is the matrix of subscript indices of endpoints that match with this endpoint
 
         if not(isempty(EPMatch))

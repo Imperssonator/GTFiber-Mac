@@ -30,7 +30,7 @@ function varargout = GTFiber(varargin)
 
 % Edit the above text to modify the response to help GTFiber
 
-% Last Modified by GUIDE v2.5 27-Apr-2017 19:17:32
+% Last Modified by GUIDE v2.5 17-May-2017 10:59:17
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -539,9 +539,9 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-function maxAngleDeg_Callback(hObject, eventdata, handles)
+function maxCurv_Callback(hObject, eventdata, handles)
 
-function maxAngleDeg_CreateFcn(hObject, eventdata, handles)
+function maxCurv_CreateFcn(hObject, eventdata, handles)
 
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');

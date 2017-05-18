@@ -1,39 +1,37 @@
-function ims = fitAllFibers(ims)
+function Scores = getScores(ims,j,ep)
 
-numFibs = max(max(ims.FiberLabels));
+%% Cosine Scores
+% cosine( searchVec1 , connVec ) * cosine( searchVec2 , connVec )
 
-% The first goal here is to take individual segments and turn them into a
-% list of pixels where the list increases by distance from one end of the
-% segment, which is quantified by the bwdistgeodesic function
+searchVec1 = ims.EndLib(j,ep).SearchVec;
+MatchEnds = ims.EndLib(j,ep).MatchEnds;
+[m n] = size(MatchEnds);
 
+Scores = zeros(m,1);
 
-
-for f = 1:numFibs
-%     disp(i)
-    ims = FitFiber(ims,f);
-    ims.Fibers(f).xy_nm = ims.Fibers(f).xy .* ims.nmPix;
-%     high_curve = [high_curve; sorted_seg(ims.fibSegs(i).curv>1e-03,1)];
+for i = 1:m
+    mj = MatchEnds(i,1); mep = MatchEnds(i,2);
+    connVec = ims.EndLib(mj,mep).EVCoord - ims.EndLib(j,ep).EVCoord;        % connVec is in FiberApp xy space (x=j, y=i), same as search vecs
+    searchVec_m = ims.EndLib(mj,mep).SearchVec;
+    Scores(i,1) = dot(searchVec1,connVec)/(norm(searchVec1)*norm(connVec)) *...
+                    dot(connVec,searchVec_m)/(norm(connVec)*norm(searchVec_m)) +...
+                    ( (dot(searchVec1,searchVec_m)/(norm(searchVec1)*norm(searchVec_m))) > cosd(180-ims.settings.maxAngleDeg) )*1000;
 end
 
-% high_curve_im = zeros(size(ims.SegLabels));
-% high_curve_im(high_curve) = 1;
-% imtool(high_curve_im)
-
 end
 
-function ims = FitFiber(ims,fibNum)
+function F = TestFitFiber(ims,joinEnds)
 
-% Basically taking the active contours algorithm from FiberApp and giving it
-% an extremely good initial guess - just a list of the pixels that are the
-% backbone of a fiber segment and an image that is the binary ground truth
-% of the fiber segment
+% Given the endpoint indices of two segment ends that are candidates for a
+% fiber match, fit a fiber, F, to obtain a curvature score for the union
 
 FiberSegs = ims.Fibers(fibNum).FiberSegs;                   % Labels of segments in fiber
 numFibSegs = length(FiberSegs);
 StartInds = ims.Fibers(fibNum).Fiber(1:2:end);              % Indices of the first endpoint of each segment in the chain
+fibImg = int16(ims.gray);
 sortPixInds = [];
 
-for i = 1:numFibSegs
+for i = 1:length(joinEnds)
     
     if StartInds(i) <= length(ims.EndLib)                           % If the start ind is the 'first' index of that segment
         sortPixInds = [sortPixInds;                                 % Take the sorted pixel indices as they are
@@ -48,7 +46,6 @@ end
 ims.Fibers(fibNum).sortPixInds = sortPixInds;
 ims.Fibers(fibNum).sortPixSubs = ind2subv(size(ims.SegLabels),sortPixInds);
 
-fibImg = int16(ims.gray);
 [gradX, gradY] = gradient2Dx2(fibImg);
 
 fiberStep = ims.settings.fiberStep;  % Number of pixels a discrete step should take
@@ -120,18 +117,18 @@ for k = 1:20
     xy = distributePoints((g*xy+vf)/M, fiberStep);
 end
 
-if size(xy,2)>=3
-    dxy=(xy(:,3:end)-xy(:,1:end-2))./(2*ims.settings.fiberStep);
-    ddxy=(xy(:,3:end)-2.*xy(:,2:end-1)+xy(:,1:end-2))./(ims.settings.fiberStep)^2;
-    curv=(dxy(1,:).*ddxy(2,:)-dxy(2,:).*ddxy(1,:))./sum(dxy.^2,1).^(1.5);
-    curv=[0,abs(curv),0];
+if length(xy)>3
+    xy_vec = diff(xy,1,2);
+    dots = sum(xy_vec(:,1:end-1).*xy_vec(:,2:end),1) ./...
+           (sqrt(sum(xy_vec(:,1:end-1).^2,1)) .* sqrt(sum(xy_vec(:,2:end).^2,1)));  % This is just stupid
+    dots(dots>1) = 1;
+    angs = acos(dots);
 else
-    curv = zeros(1,size(xy,2));
+    angs = zeros(1,size(xy,2)-1);
 end
 
 % Save fiber data
-ims.Fibers(fibNum).curv = curv;
+ims.Fibers(fibNum).angs = angs;
 ims.Fibers(fibNum).xy = xy;
 
 end
-

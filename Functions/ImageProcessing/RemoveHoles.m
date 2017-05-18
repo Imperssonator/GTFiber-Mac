@@ -1,5 +1,6 @@
 function out = RemoveHoles(IM)
 
+tic
 L = bwlabel(IM);
 RP = regionprops(IM,'EulerNumber');
 out = zeros(size(L));
@@ -11,5 +12,6 @@ for i = 1:length(RP)
 end
 
 out = out==1;
+toc
 
 end
