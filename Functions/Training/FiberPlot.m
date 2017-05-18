@@ -30,6 +30,6 @@ Fim = F.cdata;
 Fres = imresize(Fim,[w, h]);
 close(f1)
 
-imtool(Fres)
+% imtool(Fres)
 
 end

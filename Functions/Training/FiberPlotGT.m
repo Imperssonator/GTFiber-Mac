@@ -32,6 +32,6 @@ F = getframe(f1);
 Fim = F.cdata;
 FiberIm = imresize(Fim,[h, w]);
 close(f1)
-imtool(FiberIm)
+% imtool(FiberIm)
 
 end
