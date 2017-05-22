@@ -1,66 +1,37 @@
-function [him, hs, hax, hf] = curv_plot_ims(ims,segorfib,num)
+function [him, hs, hax, hf, hc] = curv_plot_ims(ims,segorfib,segNums)
 
 switch segorfib
     case 'seg'
         
-        xy=ims.fibSegs(num).xy;
-        curv=ims.fibSegs(num).curv;
-        hf = figure;
-        hax = gca;
-        hold(hax,'on')
+        if exist('segNums')~=1
+            segNums = (1:length(ims.fibSegs));
+        end
         
-        buff = 10;
-        zoom = 5;
-        bbox = [min(xy(1,:))-buff,...
-            max(xy(1,:))+buff,...
-            min(xy(2,:))-buff,...
-            max(xy(2,:))+buff];
-        
-        hs = scatter(hax,xy(1,:),xy(2,:),60,curv,'LineWidth',3);
-        freezeColors(hax);
-        him = imshow(ims.gray,'Parent',hax);
-        uistack(him,'bottom')
-        
-        hs.MarkerFaceColor = 'flat';
-        % hs.MarkerFaceAlpha = 0.5;
-        him.AlphaData = 0.35;
-        
-        hax.XLim = bbox(1:2);
-        hax.YLim = bbox(3:4);
-        hax.Position = [0 0 1 1];
-        hf.Position(3:4) = [(bbox(2)-bbox(1))*zoom,...
-            (bbox(4)-bbox(3))*zoom];
+        curv_all = [ims.fibSegs(:).curv];
+        xy_sel = [ims.fibSegs(segNums).xy];
+        curv_sel = [ims.fibSegs(segNums).curv];
+        [him, hs, hax, hf, hc] = ...
+            curv_plot(...
+            ims.gray,...
+            xy_sel,...
+            curv_sel,...
+            [min(curv_all),max(curv_all)]);
         
     case 'fib'
         
-        xy=ims.Fibers(num).xy;
-        curv=ims.Fibers(num).curv;
-        hf = figure;
-        hax = gca;
-        hold(hax,'on')
+        if exist('segNums')~=1
+            segNums = (1:length(ims.Fibers));
+        end
         
-        buff = 10;
-        zoom = 5;
-        bbox = [min(xy(1,:))-buff,...
-            max(xy(1,:))+buff,...
-            min(xy(2,:))-buff,...
-            max(xy(2,:))+buff];
-        
-        hs = scatter(hax,xy(1,:),xy(2,:),60,curv,'LineWidth',3);
-        freezeColors(hax);
-        him = imshow(ims.gray,'Parent',hax);
-        uistack(him,'bottom')
-        
-        hs.MarkerFaceColor = 'flat';
-        % hs.MarkerFaceAlpha = 0.5;
-        him.AlphaData = 0.35;
-        
-        hax.XLim = bbox(1:2);
-        hax.YLim = bbox(3:4);
-        hax.Position = [0 0 1 1];
-        hf.Position(3:4) = [(bbox(2)-bbox(1))*zoom,...
-            (bbox(4)-bbox(3))*zoom];
-        
+        curv_all = [ims.Fibers(:).curv];
+        xy_sel = [ims.Fibers(segNums).xy];
+        curv_sel = [ims.Fibers(segNums).curv];
+        [him, hs, hax, hf, hc] = ...
+            curv_plot(...
+            ims.gray,...
+            xy_sel,...
+            curv_sel,...
+            [min(curv_all),max(curv_all)]);
 end
 
 end
