@@ -90,8 +90,8 @@ for j = 1:NumSegs
         % self-matching
         EPMatch_clean = [];
         if all(size(EPMatch))
-            for i=1:size(EPMatch,1)
-                if ims.SegLabels(EPMatch(i,1),EPMatch(i,2))~=j
+            for i=1:size(EPmatch,1)
+                if ims.SegLabels(EPMatch(i,1),EPmatch(i,2))~=j
                     EPMatch_clean = [EPMatch_clean;...
                         EPMatch(i,:)];
                 end
