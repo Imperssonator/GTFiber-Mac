@@ -89,12 +89,10 @@ for j = 1:NumSegs
         % Clear out the existing segment from matches to avoid
         % self-matching
         EPMatch_clean = [];
-        if all(size(EPMatch))
-            for i=1:size(EPMatch,1)
-                if ims.SegLabels(EPMatch(i,1),EPMatch(i,2))~=j
-                    EPMatch_clean = [EPMatch_clean;...
-                        EPMatch(i,:)];
-                end
+        for i=1:size(EPMatch,1)
+            if ims.SegLabels(EPMatch(i,1),EPMatch(i,2))~=j
+                EPMatch_clean = [EPMatch_clean;...
+                                 EPMatch(i,:)];
             end
         end
         EPMatch = EPMatch_clean;
