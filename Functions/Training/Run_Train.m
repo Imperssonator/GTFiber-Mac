@@ -1,6 +1,6 @@
 if ispc
-    im_path = 'C:\Users\npersson3\Google Drive\Kaylie\Fiber Growth master\For FiberApp\S2U0T9B20118.002.tif';
-    fa_path = 'C:\Users\npersson3\Google Drive\Kaylie\Fiber Growth master\For FiberApp\S2U0T9B20118.002.mat';
+    im_path = 'C:\Users\npersson3\Google Drive\GTFiber Testing\SonAge Sol3 blade 2 V3.002 rot.tif';
+    fa_path = 'C:\Users\npersson3\Google Drive\GTFiber Testing\SonAge Sol3 blade 2 V3.002 rot.mat';
 else
     im_path = '/Users/Imperssonator/Google Drive/Kaylie/Fiber Growth master/For FiberApp/S2U0T20B2D0126.001.tif';
     fa_path = '/Users/Imperssonator/Google Drive/Kaylie/Fiber Growth master/For FiberApp/S2U0T20B2D0126.001a.mat';
@@ -11,7 +11,7 @@ nmWid = 5000;
 x0 = [...
     10;
     30;
-    3;
+    2;
     30;
     1500;
     80;
@@ -42,9 +42,9 @@ ub = [...
     10];
 
 del = [...
+    5;
     10;
-    10;
-    2;
+    1;
     10;
     500;
     10;

@@ -70,7 +70,7 @@ while cur_iter<max_iter
         disp('----')
         disp('Params')
         disp(param_mat(:,i))
-        [sens_res(i).out,sens_res(i).results] = ofun(param_mat(:,i));
+        [sens_res(i,cur_iter).out,sens_res(i,cur_iter).results] = ofun(param_mat(:,i));
     end
     
     % param_reg is a structure array that performs a linear regression on
@@ -81,18 +81,19 @@ while cur_iter<max_iter
         param_reg(i).reg = ...
             MultiPolyRegress(...
             params(i,:)',...
-            [sens_res(i).out;
-            sens_res(num_params*2+1).out;
-            sens_res(i+num_params).out],...
+            [sens_res(i,cur_iter).out;
+            sens_res(num_params*2+1,cur_iter).out;
+            sens_res(i+num_params,cur_iter).out],...
             1);
     end
     for i = 1:num_params;
         cv(i) = param_reg(i).reg.CVMAE;
     end
-    save(['Iter_', num2str(cur_iter), '.mat'])
 end
 
-[~,best_set] = min([sens_res(:).out]);
+[~,best_set] = min([sens_res(:,cur_iter).out]);
 opt_params=param_mat(:,best_set);
+
+save(['Optim_Results.mat'],'sens_res')
 
 end
