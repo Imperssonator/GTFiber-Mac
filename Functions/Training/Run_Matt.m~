@@ -1,0 +1,43 @@
+img_file = '~/Downloads/0th dilution 10may17.tif';
+fp_start = '~/Downloads/Matt4.mat';
+start_img_num = 4;
+final_img_num = 30;
+
+% First, convert from FiberApp data to my ims structure
+load(fp_start)
+
+ims=struct('nmPix',imageData.sizeX_nm/imageData.sizeX,...
+    'settings',struct('fiberStep',imageData.step),...
+    'Fibers',struct()...
+    );
+
+for i = 1:length(imageData.xy);
+ims.Fibers(i).xy = imageData.xy{i};
+end
+
+ims.gray = rgb2gray(imread(img_file,start_img_num));
+
+% Start an ims to hold all the ims's
+ims_all = ims;
+ims_all(start_img_num) = ims;
+
+% Grab the next image and fit it
+for i = start_img_num+1:final_img_num
+    disp(i)
+    next_im = rgb2gray(imread(img_file,i));
+    ims_all(i) = fitNextImg(ims,next_im);
+end
+
+L = [];
+for i = 1:length(ims_all);
+LF=[];
+for j = 1:length(ims_all(i).Fibers);
+xy=ims_all(i).Fibers(j).xy;
+LF=[LF,length(xy) * ims_all(i).settings.fiberStep * 1.82];
+end
+L = [L, mean(LF)];
+end
+figure;plot(L,'ob')
+xlabel
+plot_fits_stack(ims_all,4)
+plot_fits_stack(ims_all,15)
