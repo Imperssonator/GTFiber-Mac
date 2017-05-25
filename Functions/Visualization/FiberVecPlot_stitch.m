@@ -23,14 +23,15 @@ ax.XLim = [0 w];
 ax.YLim = [0 h];
 
 ax.Visible = 'off';
+axis equal
 % ax.PlotBoxAspectRatio = [1 1 1];
 ax.Position = [0 0 1 1];
+% 
+% F = getframe(f1);
+% Fim = F.cdata;
+% Fres = imresize(Fim,[h, w]);
 
-F = getframe(f1);
-Fim = F.cdata;
-Fres = imresize(Fim,[h, w]);
-
-handles = imshowGT(Fres,handles,'fiber_axes');
+handles = plotGT(ax,handles,'fiber_axes');
 close(f1)
 
 end

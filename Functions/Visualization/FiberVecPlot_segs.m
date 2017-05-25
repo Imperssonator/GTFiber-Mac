@@ -15,7 +15,7 @@ hold on
 for i = 1:length(XY)
 XYi = XY{i};
 plot(ha,XYi(1,:),XYi(2,:),'-b','LineWidth',2)
-plot(ha,XYi(1,:),XYi(2,:),'ob','MarkerSize',8)
+% plot(ha,XYi(1,:),XYi(2,:),'ob','MarkerSize',8)
 end
 % axis equal
 set(ha,'Ydir','reverse')
@@ -24,11 +24,12 @@ ax.XLim = [0 w];
 ax.YLim = [0 h];
 ax.Visible = 'off';
 axis equal
+ax.Position = [0 0 1 1];
 % ax.PlotBoxAspectRatio = [1 1 1];
 % ax.Position = [0 0 1 1];
-F = getframe(f1);
-Fim = F.cdata;
-Fres = imresize(Fim,[h, w]);
+% F = getframe(f1);
+% Fim = F.cdata;
+% Fres = imresize(Fim,[h, w]);
 
 handles = plotGT(ax,handles,'fiber_axes');
 close(f1)
