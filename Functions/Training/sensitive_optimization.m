@@ -94,6 +94,6 @@ end
 [~,best_set] = min([sens_res(:,cur_iter).out]);
 opt_params=param_mat(:,best_set);
 
-save(['Optim_Results.mat'],'sens_res')
+save(['Optim_Results.mat'],'sens_res','param_mat')
 
 end
