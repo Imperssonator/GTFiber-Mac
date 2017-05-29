@@ -9,11 +9,9 @@ NumEnds = 2*NumSegs;
 %% Hard Coded:
 SearchLat = ims.settings.searchLat;             % Now fraction of image width (was 90);
 SearchLong = ims.settings.searchLong;           % was 200;
-MinLength = ims.settings.maxBranchSizenm;       % Any segment less than 'maxBranchSizenm' nm long will be cleaned out
 
 [m,n] = size(ims.segsInit);
-pixdim = ims.nmPix;                         % size of a pixel in nm
-pixarea = pixdim^2;
+nmPix = ims.nmPix;                              % size of a pixel in nm
 
 
 %% Make Search Kernels
@@ -21,8 +19,8 @@ pixarea = pixdim^2;
 % First build the search kernel, which will look out from each endpoint of
 % a segment for other endpoints
 
-Kh = ceil(SearchLat/pixdim);                    % How far to search laterally (from the sides of the segment)
-Kw = ceil(SearchLong/pixdim);                   % How far to search longitudinally (out in the direction of the segment)
+Kh = ceil(SearchLat/nmPix);                    % How far to search laterally (from the sides of the segment)
+Kw = ceil(SearchLong/nmPix);                   % How far to search longitudinally (out in the direction of the segment)
 
 Kernel = ones(Kh,Kw);                           % The search kernel
 
@@ -74,7 +72,7 @@ for j = 1:NumSegs
         % (RotKStart)
         RotKern = imrotate(Kernel,SearchAngle);                     % Rotate the kernel to that angle
         RotKStart_rel = [cosd(SearchAngle), -sind(SearchAngle);...  % Rotate the kernel start point to that angle
-                         sind(SearchAngle), cos(SearchAngle)]...
+                         sind(SearchAngle), cosd(SearchAngle)]...
                          * KStart_rel';
         RotKCent = size(RotKern)./2;
         RotKStart = round(RotKStart_rel'+RotKCent);
