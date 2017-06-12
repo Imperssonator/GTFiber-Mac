@@ -1,4 +1,8 @@
-function ims = FiberLengths(ims)
+function ims = FiberLengths(ims,noEdge)
+
+if exist('noEdge')~=1
+    noEdge=1;
+end
 
 numFibs = length(ims.Fibers);
 FLD = zeros(numFibs,1);
@@ -7,14 +11,19 @@ for i = 1:length(ims.Fibers)
     
     length_i = (size(ims.Fibers(i).xy,2)-1)* ims.settings.fiberStep * ims.nmPix;
     
-    if (not(any( ims.Fibers(i).xy(1,:) < 0.05 * size(ims.gray,2) )) && ...
-            not(any( ims.Fibers(i).xy(1,:) > 0.95 * size(ims.gray,2) )) && ...
-            not(any( ims.Fibers(i).xy(2,:) < 0.05 * size(ims.gray,1) )) && ...
-            not(any( ims.Fibers(i).xy(2,:) > 0.95 * size(ims.gray,1) )) ...
-            )
-        
-        FLD(i) = length_i;
+    if noEdge
+        if (not(any( ims.Fibers(i).xy(1,:) < 0.05 * size(ims.gray,2) )) && ...
+                not(any( ims.Fibers(i).xy(1,:) > 0.95 * size(ims.gray,2) )) && ...
+                not(any( ims.Fibers(i).xy(2,:) < 0.05 * size(ims.gray,1) )) && ...
+                not(any( ims.Fibers(i).xy(2,:) > 0.95 * size(ims.gray,1) )) ...
+                )
+            
+            FLD(i) = length_i;
+        else
+            ims.Fibers(i).Length = length_i;
+        end
     else
+        FLD(i) = length_i;
         ims.Fibers(i).Length = length_i;
     end
 end

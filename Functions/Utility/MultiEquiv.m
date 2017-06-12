@@ -12,4 +12,6 @@ for i = 1:length(V)
     
 end
 
+out = logical(out);
+
 end

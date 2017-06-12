@@ -42,7 +42,7 @@ ims = fitAllFibers(ims);
 waitbar(0.9,hwait,'Analyzing Structure...');
 ims = op2d_vec(ims);
 ims = calc_orient_dist(ims);
-ims = FiberLengths(ims);
+ims = FiberLengths(ims,0);
 ims = FiberWidths(ims);
 
 save('sf2debug_2','ims')

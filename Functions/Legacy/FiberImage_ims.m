@@ -1,4 +1,4 @@
-function [] = FiberPlot(IMS)
+function [] = FiberImage_ims(IMS)
 
 FL = IMS.FiberLabels;
 [m n] = size(FL);
