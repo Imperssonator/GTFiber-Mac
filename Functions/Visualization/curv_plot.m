@@ -6,6 +6,7 @@ end
 
 buff = 10;
 zoom = 5;
+MarkerSize=30;
 bbox = [min(xy(1,:))-buff,...
         max(xy(1,:))+buff,...
         min(xy(2,:))-buff,...
@@ -15,25 +16,30 @@ bbox = [min(xy(1,:))-buff,...
 m=64;
 cmap=colormap([gray(255);parula(m)]);
 
-him=imshow(img,cmap);
+figure;
+him=imshow(imadjust(img),cmap);
 
+% Plot the points of the fibers, but also plot two points that are the min
+% and max curv values so the colormap doesn't try to rescale and screw things up
 hold on
-hs=scatter(xy(1,:),xy(2,:),100,'LineWidth',3);
-hs(2)=scatter([1 1],[1 1],1,[256,256+m-1]);
+hs=scatter([1 1],[1 1],1,[256,256+m-1]);
+hs(2)=scatter(xy(1,:),xy(2,:),MarkerSize,'LineWidth',1);
 hold off
 
-hs(1).MarkerFaceColor = 'flat';
+hs(2).MarkerFaceColor = 'flat';
 him.AlphaData = 0.4;
 
+% This is kind of weird, but you basically want to map from [cmin cmax] to
+% [1 64], and cmin is usually 0.
 cmin = lims(1); cmax = lims(2);
 curv_color = min(m,round((m-1)*(curv-cmin)/(cmax-cmin))+1);
-hs(1).CData=curv_color+255;
+hs(2).CData=curv_color+255;
 
 hc=colorbar();
 hc.Limits=[256, 256+m-1];
 hc.Ticks = linspace(256,255+m,5);
 hc.TickLabels = ...
-    cellfun(@(x) num2str(x,2),...
+    cellfun(@(x) num2str(x*1000,2),...  % Multiply by 1000 to scale to 1/um
             mat2cell(linspace(cmin,cmax,5)',...
                      ones(size(linspace(cmin,cmax,5)',1),1),...
                      1),...

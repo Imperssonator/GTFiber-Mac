@@ -120,9 +120,12 @@ for k = 1:20
     xy = distributePoints((g*xy+vf)/M, fiberStep);
 end
 
+% Convert to real units
+xy_nm = xy .* ims.nmPix;
+
 if size(xy,2)>=3
-    dxy=(xy(:,3:end)-xy(:,1:end-2))./(2*ims.settings.fiberStep);
-    ddxy=(xy(:,3:end)-2.*xy(:,2:end-1)+xy(:,1:end-2))./(ims.settings.fiberStep)^2;
+    dxy=(xy_nm(:,3:end)-xy_nm(:,1:end-2))./(2*ims.settings.fiberStep_nm);
+    ddxy=(xy_nm(:,3:end)-2.*xy_nm(:,2:end-1)+xy_nm(:,1:end-2))./(ims.settings.fiberStep_nm)^2;
     curv=(dxy(1,:).*ddxy(2,:)-dxy(2,:).*ddxy(1,:))./sum(dxy.^2,1).^(1.5);
     curv=[0,abs(curv),0];
 else
@@ -130,8 +133,11 @@ else
 end
 
 % Save fiber data
+ims.Fibers(fibNum).length =...
+    (size(xy,2)-1)* ims.settings.fiberStep_nm;
 ims.Fibers(fibNum).curv = curv;
 ims.Fibers(fibNum).xy = xy;
+ims.Fibers(fibNum).xy_nm = xy_nm;
 
 end
 

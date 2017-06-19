@@ -9,7 +9,7 @@ FLD = zeros(numFibs,1);
 
 for i = 1:length(ims.Fibers)
     
-    length_i = (size(ims.Fibers(i).xy,2)-1)* ims.settings.fiberStep * ims.nmPix;
+    length_i = ims.Fibers(i).length;
     
     if noEdge
         if (not(any( ims.Fibers(i).xy(1,:) < 0.05 * size(ims.gray,2) )) && ...
@@ -19,12 +19,9 @@ for i = 1:length(ims.Fibers)
                 )
             
             FLD(i) = length_i;
-        else
-            ims.Fibers(i).Length = length_i;
         end
     else
         FLD(i) = length_i;
-        ims.Fibers(i).Length = length_i;
     end
 end
 

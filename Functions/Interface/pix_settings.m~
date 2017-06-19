@@ -15,8 +15,9 @@ ims.settings.Options.rho = ims.settings.rhonm/ims.nmPix;
 % ims.settings.gridStep = ceil(ims.settings.gridStepnm/ims.nmPix);
 
 % Match Search settings
-ims.settings.fiberStep = ims.settings.fiberStep_nm / ims.nmPix;
+ims.settings.fiberStep = ims.settings.fiberStep_nm / ims.settings.nmPix;
 % settings.maxAngleDeg = str2num(get(handles.maxAngleDeg,'String'));
+ims.settings.maxCurv = str2num(get(handles.maxCurv,'String'));
 ims.settings.searchLat = 2 * ims.settings.stitchGap;
 ims.settings.searchLong = 2 * ims.settings.stitchGap;
 

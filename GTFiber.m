@@ -30,7 +30,7 @@ function varargout = GTFiber(varargin)
 
 % Edit the above text to modify the response to help GTFiber
 
-% Last Modified by GUIDE v2.5 17-May-2017 10:59:17
+% Last Modified by GUIDE v2.5 16-Jun-2017 18:55:55
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -462,6 +462,7 @@ function showImg_Callback(hObject, eventdata, handles)
 if isfield(handles.ims,'img')
     handles=imshowGT(handles.ims.img,handles,'img_axes');
 end
+guidata(hObject, handles);
 
 
 function showCED_Callback(hObject, eventdata, handles)
@@ -586,3 +587,26 @@ end
 
 
 function scaleParams_Callback(hObject, eventdata, handles)
+
+
+
+function edit20_Callback(hObject, eventdata, handles)
+% hObject    handle to minFibLen (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of minFibLen as text
+%        str2double(get(hObject,'String')) returns contents of minFibLen as a double
+
+
+% --- Executes during object creation, after setting all properties.
+function edit20_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to minFibLen (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end

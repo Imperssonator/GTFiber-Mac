@@ -37,6 +37,7 @@ ims = SegMatch(ims);
 % 7. Vectorize Fibers
 waitbar(0.8,hwait,'Vectorizing Final Fibers...');
 ims = fitAllFibers(ims);
+ims = RemoveShortFibers(ims);
 
 % 8. Calculate op2d and fiber length and width distributions
 waitbar(0.9,hwait,'Analyzing Structure...');

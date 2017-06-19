@@ -6,7 +6,7 @@ function ims = CleanSkeleton(ims)
 % Closing to remove small holes
 skelClose = bwmorph(imclose(ims.skel,strel('disk',1)),'skeleton',Inf);
 
-% FRemove branches up to a certain size
+% Remove branches up to a certain size
 ims.skelTrim = RemoveBranches(skelClose,ims.settings.maxBranchSize);
 
 % Find branch points, dilate them, remove the dilated points to separate

@@ -1,33 +1,17 @@
-function ims = fitAllSegments(ims)
+function ims = fitAllFibers(ims)
 
-if isfield(ims,'fibSegs')
-    ims = rmfield(ims,'fibSegs');
-end
-
-numSegs = max(max(ims.SegLabels));
+numFibs = max(max(ims.FiberLabels));
 
 % The first goal here is to take individual segments and turn them into a
 % list of pixels where the list increases by distance from one end of the
 % segment, which is quantified by the bwdistgeodesic function
-% This sorted list of pixels is used as the initialization for active
-% contours
 
-high_curve = [];
 
-for i = 1:numSegs
-    
-    coord = ims.EndLib(i,1).EPCoord;                                        % Get the image coordinate of the first endpoint of this segment
-    end_ind = sub2ind(size(ims.SegLabels),coord(1),coord(2));               % Get the image linear index of the first endpoint            
-    dd = bwdistgeodesic(ims.SegLabels==i,end_ind);                          % Find the distance of all pixels in this segment from the endpoint
-    seg_inds = find(ims.SegLabels==i);                                      % list of linear indices of all pixels in segment
-    vals = dd(seg_inds);                                                    % list of distances of all pixels from endpoint
-    seg_list = [seg_inds, vals];                                            % table of pixel index + distance from endpoint
-    sorted_seg = sortrows(seg_list,2);                                      % sorted table based on distance from endpoint (endpoint first)
-    ims.fibSegs(i).sortPixInds = sorted_seg(:,1);                           % sorted list of linear indices
-    ims.fibSegs(i).sortPixSubs = ind2subv(size(ims.SegLabels),sorted_seg(:,1)); % sorted list of image coordinates of segment
-    
-    ims = FitSegment(ims,i);
-    
+
+for f = 1:numFibs
+%     disp(i)
+    ims = FitFiber(ims,f);
+    ims.Fibers(f).xy_nm = ims.Fibers(f).xy .* ims.nmPix;
 %     high_curve = [high_curve; sorted_seg(ims.fibSegs(i).curv>1e-03,1)];
 end
 
@@ -37,23 +21,42 @@ end
 
 end
 
-function ims = FitSegment(ims,segNum)
+function ims = FitFiber(ims,fibNum)
 
 % Basically taking the active contours algorithm from FiberApp and giving it
 % an extremely good initial guess - just a list of the pixels that are the
-% extracted backbone of a fiber segment
+% backbone of a fiber segment and an image that is the binary ground truth
+% of the fiber segment
 
-fibSegImg = ims.gray; %ims.SegLabels==segNum;
+FiberSegs = ims.Fibers(fibNum).FiberSegs;                   % Labels of segments in fiber
+numFibSegs = length(FiberSegs);
+StartInds = ims.Fibers(fibNum).Fiber(1:2:end);              % Indices of the first endpoint of each segment in the chain
+sortPixInds = [];
 
-[gradX, gradY] = gradient2Dx2(int16(fibSegImg));
+for i = 1:numFibSegs
+    
+    if StartInds(i) <= length(ims.EndLib)                           % If the start ind is the 'first' index of that segment
+        sortPixInds = [sortPixInds;                                 % Take the sorted pixel indices as they are
+                       ims.fibSegs(FiberSegs(i)).sortPixInds];
+    else                                                            % Otherwise, flip them upside down
+        sortPixInds = [sortPixInds;
+                       ims.fibSegs(FiberSegs(i)).sortPixInds(end:-1:1)];
+    end
+    
+end
+
+ims.Fibers(fibNum).sortPixInds = sortPixInds;
+ims.Fibers(fibNum).sortPixSubs = ind2subv(size(ims.SegLabels),sortPixInds);
+
+fibImg = int16(ims.gray);
+[gradX, gradY] = gradient2Dx2(fibImg);
 
 fiberStep = ims.settings.fiberStep;  % Number of pixels a discrete step should take
-
+    
 % Short names for fiber tracking parameters and data
-xy_col = ims.fibSegs(segNum).sortPixSubs;    % column vector of i,j coords of pixels in order
+xy_col = ims.Fibers(fibNum).sortPixSubs;    % column vector of i,j coords of pixels in order
 xy = flipud(xy_col');
 xy = distributePoints(xy,fiberStep);
-
 a = 0;
 b = 5;
 g = 10;
@@ -61,7 +64,8 @@ k1 = 20;
 k2 = 10;
 fiberIntensity = 255;
 
-for k = 1:10
+% Apply fitting algorithm FA.iterations times
+for k = 1:20
     % Construct a matrix M for the internal energy contribution
     n = length(xy);
     
@@ -91,11 +95,11 @@ for k = 1:10
     M = sparse(m1, m2, m3, n, n);
     
     % Vector field of external energy
-    % (interp2D MATLAB function requests double input, which consume too
+    % (interp2 MATLAB function requests double input, which consume too
     % much memory for big AFM images)
     % gradX and gradY are doubled! (see gradient2Dx2)
     vfx = interp2D(gradX, xy(1,:), xy(2,:), 'cubic')/2;
-    vfy = interp2D(gradY, xy(1,:), xy(2,:), 'cubic')/2;
+    vfy = interp2D(gradY, xy(1,:), xy(2,:), 'cubic')/2;   
     vf = k1*[vfx; vfy]/fiberIntensity;
     
     % Normalized vectors of fiber ends
@@ -105,8 +109,8 @@ for k = 1:10
     v_end = v_end/sqrt(sum(v_end.^2));
     
     % Image intensities at the ends
-    int_start = interp2D(fibSegImg, xy(1,1), xy(2,1), 'cubic');
-    int_end = interp2D(fibSegImg, xy(1,end), xy(2,end), 'cubic');
+    int_start = interp2D(fibImg, xy(1,1), xy(2,1), 'cubic');
+    int_end = interp2D(fibImg, xy(1,end), xy(2,end), 'cubic');
     
     % Full external energy
     vf(:,1) = vf(:,1) + k2*v_start*int_start/fiberIntensity;
@@ -120,8 +124,8 @@ end
 xy_nm = xy .* ims.nmPix;
 
 if size(xy,2)>=3
-    dxy=(xy_nm(:,3:end)-xy_nm(:,1:end-2))./(2*ims.settings.fiberStep_nm);
-    ddxy=(xy_nm(:,3:end)-2.*xy_nm(:,2:end-1)+xy_nm(:,1:end-2))./(ims.settings.fiberStep_nm)^2;
+    dxy=(xy(:,3:end)-xy(:,1:end-2))./(2*ims.settings.fiberStep);
+    ddxy=(xy(:,3:end)-2.*xy(:,2:end-1)+xy(:,1:end-2))./(ims.settings.fiberStep)^2;
     curv=(dxy(1,:).*ddxy(2,:)-dxy(2,:).*ddxy(1,:))./sum(dxy.^2,1).^(1.5);
     curv=[0,abs(curv),0];
 else
@@ -129,12 +133,10 @@ else
 end
 
 % Save fiber data
-ims.fibSegs(segNum).length =...
-    (size(xy,2)-1)* ims.settings.fiberStep_nm;
-ims.fibSegs(segNum).curv = curv;
-ims.fibSegs(segNum).xy = xy;
-ims.fibSegs(segNum).xy_nm = xy_nm;
-ims.EndLib(segNum,1).EVCoord = xy(:,1);             % These are coordinates in FiberApp xy space (x=j, y=i) of the endpoints
-ims.EndLib(segNum,2).EVCoord = xy(:,end);
+ims.Fibers(fibNum).length =...
+    (size(xy,2)-1)* ims.settings.fiberStep * ims.nmPix;
+ims.Fibers(fibNum).curv = curv;
+ims.Fibers(fibNum).xy = xy;
+
 end
 

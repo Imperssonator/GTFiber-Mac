@@ -29,16 +29,18 @@ handles=imshowGT(ims.CEDtophat,handles,'img_axes');
 waitbar(0.7,hwait,'Threshold and Clean...');
 switch settings.threshMethod
     case 1
-        ims.CEDbw = YBSimpleSeg(ims.CEDtophat);
+        ims.CEDbw = imbinarize(ims.CEDtophat,'adaptive');
     case 2
         ims.CEDbw = im2bw(ims.CEDtophat,settings.globalThresh);
 end
+
 handles=imshowGT(ims.CEDbw,handles,'img_axes');
 ims.CEDclean = bwareaopen(ims.CEDbw,settings.noisepix);
 ims.cleanRP = regionprops(ims.CEDclean,'Solidity','Eccentricity');
 not_particles = ~([ims.cleanRP(:).Eccentricity]<0.95 & [ims.cleanRP(:).Solidity]>0.8);
 temp_label = bwlabel(ims.CEDclean);
 ims.CEDclean = MultiEquiv(temp_label,find(not_particles));
+% ims.CEDclean = imclose(ims.CEDclean,strel('disk',1));
 handles=imshowGT(ims.CEDclean,handles,'img_axes');
 
 

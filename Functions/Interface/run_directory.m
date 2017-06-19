@@ -55,9 +55,8 @@ for i = 1:numIms
     
     % Save figures if specified
     if ims.settings.figSave
-        FiberVec_ACM(ims,1);
-        ODist_plot(ims,1);
-        plotS2D(ims,1);
+        FiberColors(ims,'fib',0,1);
+        FiberColors(ims,'fib',0.4,1);
     end
     
 end
