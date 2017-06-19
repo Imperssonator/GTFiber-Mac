@@ -37,7 +37,7 @@ ims = StitchFibers2(ims);
 score = overlap_frac(fa_path,ims);
 disp('score')
 disp(score)
-out = norm([1 0] - score(1:2));
+out = norm([1 0] - score([1 4]));
 
 results = ...
 struct(...

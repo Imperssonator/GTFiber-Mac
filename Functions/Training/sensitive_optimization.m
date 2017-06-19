@@ -15,6 +15,8 @@ params(too_low,1) = lb(too_low);
 params(too_high,3) = ub(too_high);
 run = 0;
 
+sens_res = struct();
+
 while cur_iter<max_iter
     cur_iter=cur_iter+1;
     disp(cur_iter)
@@ -62,7 +64,6 @@ while cur_iter<max_iter
     % numParams*2+1 parameter sets in param_mat
     % sens_res.out has the objective function value, while sens_res.Fibers
     % has the final set of Fibers
-    sens_res = struct();
     for i = 1:size(param_mat,2)
         run = run+1;
         disp('Run number')
