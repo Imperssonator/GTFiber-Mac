@@ -13,4 +13,13 @@ end
 rmfield(ims,'Fibers')
 ims.Fibers = FibersNew;
 
+% Build the FiberLabels matrix
+FiberLabels = zeros(size(ims.SegLabels));
+for i = 1:length(ims.Fibers)
+    FiberLabels = FiberLabels ...
+        + i .* MultiEquiv(ims.SegLabels,ims.Fibers(i).Fiber);
+end
+
+ims.FiberLabels = FiberLabels;
+
 end

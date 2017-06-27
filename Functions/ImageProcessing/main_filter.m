@@ -36,17 +36,17 @@ end
 
 handles=imshowGT(ims.CEDbw,handles,'img_axes');
 ims.CEDclean = bwareaopen(ims.CEDbw,settings.noisepix);
-ims.cleanRP = regionprops(ims.CEDclean,'Solidity','Eccentricity');
-not_particles = ~([ims.cleanRP(:).Eccentricity]<0.95 & [ims.cleanRP(:).Solidity]>0.8);
-temp_label = bwlabel(ims.CEDclean);
-ims.CEDclean = MultiEquiv(temp_label,find(not_particles));
+% ims.cleanRP = regionprops(ims.CEDclean,'Solidity','Eccentricity');
+% not_particles = ~([ims.cleanRP(:).Eccentricity]<0.95 & [ims.cleanRP(:).Solidity]>0.8);
+% temp_label = bwlabel(ims.CEDclean);
+% ims.CEDclean = MultiEquiv(temp_label,find(not_particles));
 % ims.CEDclean = imclose(ims.CEDclean,strel('disk',1));
 handles=imshowGT(ims.CEDclean,handles,'img_axes');
 
 
 % Skeletonize
 waitbar(0.8,hwait,'Skeletonization...');
-ims.skel = bwmorph(ims.CEDclean,'skel',Inf);
+ims.skel = bwmorph(ims.CEDclean,'thin',Inf);
 handles=imshowGT(ims.skel,handles,'img_axes');
 ims = CleanSkeleton(ims);
 handles=imshowGT(ims.skelTrim,handles,'img_axes');

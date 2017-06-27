@@ -1,5 +1,7 @@
 function ims = StitchFibers2(ims)
 
+ims = CleanSkeleton(ims);
+
 % 2. Label segments and Make EndLib
 hwait = waitbar(0,'Building Endpoint Library...');
 ims = BuildEndLib(ims);

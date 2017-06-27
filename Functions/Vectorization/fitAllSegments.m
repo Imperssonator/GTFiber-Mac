@@ -58,7 +58,7 @@ a = 0;
 b = 5;
 g = 10;
 k1 = 20;
-k2 = 10;
+k2 = 0;
 fiberIntensity = 255;
 
 for k = 1:10
