@@ -3,7 +3,7 @@ This is the public-facing repository for the Mac OS version of GTFiber. GTFiber 
 
 ![Imgur](http://i.imgur.com/GDL2HQP.png)
 
-See [GTFiber for Windows](https://github.com/Imperssonator/GTFiber-Windows) for 64-bit Windows version (XP64, 7+).
+See [GTFiber for Windows](https://github.com/Imperssonator/GTFiber-Windows/v2-new-match) for 64-bit Windows version (XP64, 7+).
 
 ## Installing the Standalone App
 GTFiber comes with an installer that enables users to run the program without MATLAB.
