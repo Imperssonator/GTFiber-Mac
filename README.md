@@ -1,7 +1,7 @@
 # GTFiber-Mac
 This is the public-facing repository for the Mac OS version of GTFiber. GTFiber is an open source program for automated quantitative analysis of images of fibrillar microstructures, detailed in [Chemistry of Materials](http://pubs.acs.org/doi/abs/10.1021/acs.chemmater.6b01825).
 
-![Imgur](http://imgur.com/a/hOfAE)
+![Imgur](http://imgur.com/GDL2HQP)
 
 See [GTFiber for Windows](https://github.com/Imperssonator/GTFiber-Windows) for 64-bit Windows version (XP64, 7+).
 
