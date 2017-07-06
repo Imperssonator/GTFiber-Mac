@@ -331,12 +331,12 @@ nmWid = str2num(get(handles.nmWid,'String'));
 
 if get(handles.scaleParams,'Value')
     if ~isempty(nmWid)
-        set(handles.gauss,'String',num2str(nmWid*10/5000));
-        set(handles.rho,'String',num2str(nmWid*30/5000));
-        set(handles.tophatSize,'String',num2str(nmWid*30/5000));
-        set(handles.noiseArea,'String',num2str(nmWid^2*1500/5000^2));
-        set(handles.maxBranchSize,'String',num2str(nmWid*80/5000));
-        set(handles.stitchGap,'String',num2str(nmWid*100/5000));
+        set(handles.gauss,'String',num2str(nmWid*5/5000));
+        set(handles.rho,'String',num2str(nmWid*15/5000));
+        set(handles.tophatSize,'String',num2str(nmWid*40/5000));
+        set(handles.noiseArea,'String',num2str(nmWid*1500/5000));
+        set(handles.maxBranchSize,'String',num2str(nmWid*60/5000));
+        set(handles.stitchGap,'String',num2str(nmWid*60/5000));
     end
 end
 
