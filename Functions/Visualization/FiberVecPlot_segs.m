@@ -14,7 +14,7 @@ hold on
 
 for i = 1:length(XY)
 XYi = XY{i};
-plot(ha,XYi(1,:),XYi(2,:),'-b','LineWidth',2)
+plot(ha,XYi(1,:),XYi(2,:),'-b','LineWidth',1)
 % plot(ha,XYi(1,:),XYi(2,:),'ob','MarkerSize',8)
 end
 % axis equal
