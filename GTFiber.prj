@@ -6,12 +6,12 @@
     <param.version>2.0</param.version>
     <param.authnamewatermark>Nils Persson</param.authnamewatermark>
     <param.email>nils.persson@chbe.gatech.edu</param.email>
-    <param.company>Georgia Institute of Technology</param.company>
+    <param.company />
     <param.summary />
     <param.description />
     <param.screenshot>${PROJECT_ROOT}/my splash.png</param.screenshot>
     <param.guid />
-    <param.installpath.string>/Georgia_Institute_of_Technology/GTFiber/</param.installpath.string>
+    <param.installpath.string>/GTFiber/</param.installpath.string>
     <param.installpath.combo>option.installpath.systemwideapp</param.installpath.combo>
     <param.logo />
     <param.install.notes>In the following directions, replace MCR_ROOT by the directory where the MATLAB Runtime is installed on the target machine.
@@ -50,7 +50,7 @@ If it is defined, set it to the concatenation of these strings:
     <unset>
       <param.icon />
       <param.icons />
-      <param.summary />
+      <param.company />
       <param.description />
       <param.guid />
       <param.installpath.string />
