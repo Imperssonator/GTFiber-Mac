@@ -3,7 +3,7 @@ This is the public-facing repository for the Mac OS version of GTFiber. GTFiber 
 
 ![Imgur](http://i.imgur.com/skufC9e.png?1)
 
-See [GTFiber for Windows](https://github.com/Imperssonator/GTFiber-Windows) for 64-bit Windows version (XP64, 7+).
+See [GTFiber for Windows](https://github.com/Imperssonator/GTFiber-Windows/tree/v2) for 64-bit Windows version (XP64, 7+).
 
 ## Running in MATLAB
 * [Download](https://github.com/Imperssonator/GTFiber-Mac/archive/master.zip) the repository to your local machine
