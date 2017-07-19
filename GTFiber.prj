@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.ezdeploy" plugin-version="1.0">
-  <configuration file="/Users/Imperssonator/Documents/MATLAB/GTFiber-Mac/GTFiber.prj" location="/Users/Imperssonator/Documents/MATLAB/GTFiber-Mac" name="GTFiber" target="target.ezdeploy.standalone" target-name="Application Compiler">
+  <configuration build-checksum="3933598012" file="/Users/Imperssonator/Documents/MATLAB/GTFiber-Mac/GTFiber.prj" location="/Users/Imperssonator/Documents/MATLAB/GTFiber-Mac" name="GTFiber" preferred-package-location="/Users/Imperssonator/Documents/MATLAB/GTFiber-Mac/GTFiber/for_redistribution" preferred-package-type="package.type.app" target="target.ezdeploy.standalone" target-name="Application Compiler">
     <param.appname>GTFiber</param.appname>
     <param.icon />
     <param.icons />
@@ -51,6 +51,7 @@ If it is defined, set it to the concatenation of these strings:
       <param.icon />
       <param.icons />
       <param.company />
+      <param.summary />
       <param.description />
       <param.guid />
       <param.installpath.string />

@@ -32,7 +32,7 @@ else
     ims.gray = img;
 end
 
-ims = YBSimpleSeg(ims);
+% ims = YBSimpleSeg(ims);
 
 end
 
